@@ -30,7 +30,7 @@ ConnesLean/
 
 Run:
 ```bash
-lake +leanprover-lean4-v4.16.0 new ConnesLean math
+lake +leanprover/lean4:v4.28.0 new ConnesLean math
 cd ConnesLean
 lake update
 lake exe cache get
