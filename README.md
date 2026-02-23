@@ -18,3 +18,5 @@ I will ask for LSpec property tests of all definitions, axioms and theorems. htt
 The first pass of the proof may contain axioms, and sorrys, both of which allow the delay of more difficult sections until the full skeleton of the proof is done. Then there will be a second pass to remove axioms and replace them with theorems. A third pass to remove sorrys. A fourth path to examine definitions carefully. Each will get the proof closer to good quality.
 
 I'm not that familiar with analysis or measure theory, so this may not go well at all. Or it might go quite well.
+
+![HB1WYU7akAAe7sU](https://github.com/user-attachments/assets/e5844547-f516-4f81-b0c1-75a501fa5559)
