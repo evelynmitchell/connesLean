@@ -50,7 +50,7 @@ jobs:
 
       - name: Build compile-time tests
         working-directory: ConnesLean
-        run: lake build test
+        run: lake build ConnesLeanTest
 
       - name: Build LSpec tests
         working-directory: ConnesLean
