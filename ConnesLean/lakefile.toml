@@ -17,10 +17,19 @@ rev = "v4.28.0"
 [[require]]
 name = "LSpec"
 scope = "argumentcomputer"
+rev = "7f5bb9de3aab89c2c24a1c917b17d9b75e6f220e"
 
 [[lean_lib]]
 name = "ConnesLean"
 
 [[lean_lib]]
-name = "test"
-globs = ["test"]
+name = "ConnesLeanTest"
+globs = ["ConnesLeanTest"]
+
+[[lean_lib]]
+name = "lspec"
+globs = ["lspec"]
+
+[[lean_exe]]
+name = "connes_lspec"
+root = "lspec.Main"

@@ -14,7 +14,7 @@ Create the Lean4 project structure:
 ConnesLean/
 ├── lakefile.toml
 ├── lean-toolchain
-├── ConnesLean.lean              # Root import file
+├── ConnesLean.lean                        # Root import file
 ├── ConnesLean/
 │   ├── Stage1/
 │   │   ├── MultiplicativeHaar.lean
@@ -24,13 +24,15 @@ ConnesLean/
 │   │   └── UnitaryIdentity.lean           # Lemma 2
 │   └── Common/
 │       └── Notation.lean
-└── test/
-    └── Stage1Tests.lean
+├── ConnesLeanTest/
+│   └── Stage1Tests.lean
+└── lspec/
+    └── Main.lean                          # LSpec executable runner
 ```
 
 Run:
 ```bash
-lake +leanprover-lean4-v4.16.0 new ConnesLean math
+lake +leanprover/lean4:v4.28.0 new ConnesLean math
 cd ConnesLean
 lake update
 lake exe cache get
@@ -197,6 +199,6 @@ Add imports for all Stage 1 files so `lake build` compiles the full stage.
 ## Verification
 
 1. `lake build` compiles without errors (sorrys are warnings, not errors)
-2. `lake test` runs LSpec tests
+2. `lake exe connes_lspec` runs LSpec tests
 3. `grep -r sorry ConnesLean/Stage1/` to audit remaining sorrys
 4. Each `.lean` file has a module docstring referencing the corresponding section/lemma in `lamportform.tex`

@@ -234,15 +234,16 @@ ensure_lean_project() {
             log_ok "Lean project exists"
         else
             log_warn "Lean project not built"
+            return 1
         fi
         return 0
     fi
 
     if [[ -d "ConnesLean" ]]; then
         log_info "Fetching Mathlib cache..."
-        (cd ConnesLean && lake exe cache get 2>&1 | tail -1)
+        (cd ConnesLean && lake exe cache get 2>&1 | tee -a /tmp/lake_cache.log | tail -1)
         log_info "Building ConnesLean..."
-        (cd ConnesLean && lake build ConnesLean 2>&1 | tail -5)
+        (cd ConnesLean && lake build ConnesLean 2>&1 | tee -a /tmp/lake_build.log | tail -5)
         log_ok "Lean project built"
     else
         log_warn "ConnesLean directory not found"
