@@ -44,6 +44,10 @@ jobs:
         working-directory: ConnesLean
         run: lake update
 
+      - name: Fetch Mathlib cache
+        working-directory: ConnesLean
+        run: lake exe cache get
+
       - name: Build library
         working-directory: ConnesLean
         run: lake build ConnesLean

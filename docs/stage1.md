@@ -24,7 +24,7 @@ ConnesLean/
 │   │   └── UnitaryIdentity.lean           # Lemma 2
 │   └── Common/
 │       └── Notation.lean
-├── test/
+├── ConnesLeanTest/
 │   └── Stage1Tests.lean
 └── lspec/
     └── Main.lean                          # LSpec executable runner
@@ -199,6 +199,6 @@ Add imports for all Stage 1 files so `lake build` compiles the full stage.
 ## Verification
 
 1. `lake build` compiles without errors (sorrys are warnings, not errors)
-2. `lake test` runs LSpec tests
+2. `lake exe connes_lspec` runs LSpec tests
 3. `grep -r sorry ConnesLean/Stage1/` to audit remaining sorrys
 4. Each `.lean` file has a module docstring referencing the corresponding section/lemma in `lamportform.tex`
