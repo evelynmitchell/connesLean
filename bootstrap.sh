@@ -162,6 +162,36 @@ ensure_precommit() {
     fi
 }
 
+# Install jq (JSON processor, required by ensure-fresh-branch hook)
+ensure_jq() {
+    if has_cmd jq; then
+        log_ok "jq $(get_version jq)"
+        return 0
+    fi
+
+    if [[ "${CHECK_ONLY:-}" == "1" ]]; then
+        log_warn "jq not installed"
+        return 1
+    fi
+
+    log_info "Installing jq..."
+    if has_cmd apt-get; then
+        sudo apt-get update -qq && sudo apt-get install -y -qq jq
+    elif has_cmd brew; then
+        brew install jq
+    else
+        log_warn "Cannot install jq: no apt or brew"
+        return 1
+    fi
+
+    if has_cmd jq; then
+        log_ok "jq $(get_version jq) installed"
+    else
+        log_err "Failed to install jq"
+        return 1
+    fi
+}
+
 # Install shellcheck (shell linter)
 ensure_shellcheck() {
     if has_cmd shellcheck; then
@@ -223,6 +253,7 @@ main() {
     ensure_uv || ((++failed))
     ensure_ruff || ((++failed))
     ensure_precommit "$env" || ((++failed))
+    ensure_jq || ((++failed))
     ensure_shellcheck || ((++failed))
 
     echo ""
@@ -243,7 +274,7 @@ main() {
 echo "Installing Claude Code..."
 if command -v claude > /dev/null 2>&1; then
     CLAUDE_VERSION=$(claude --version 2>&1 | head -1)
-    print_success "Claude Code already installed ($CLAUDE_VERSION)"
+    log_ok "Claude Code already installed ($CLAUDE_VERSION)"
 else
     curl -fsSL https://claude.ai/install.sh | bash
     # Add to PATH for current session
@@ -252,9 +283,9 @@ else
     # Verify installation succeeded
     if command -v claude > /dev/null 2>&1; then
         CLAUDE_VERSION=$(claude --version 2>&1 | head -1)
-        print_success "Claude Code installed ($CLAUDE_VERSION)"
+        log_ok "Claude Code installed ($CLAUDE_VERSION)"
     else
-        print_warning "Claude Code installation may have failed - command not found"
+        log_warn "Claude Code installation may have failed - command not found"
     fi
 fi
 echo ""
