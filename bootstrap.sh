@@ -192,6 +192,64 @@ ensure_jq() {
     fi
 }
 
+# Install elan and Lean 4 toolchain
+ensure_elan() {
+    if has_cmd elan; then
+        log_ok "elan $(get_version elan)"
+        return 0
+    fi
+
+    if [[ "${CHECK_ONLY:-}" == "1" ]]; then
+        log_warn "elan not installed"
+        return 1
+    fi
+
+    log_info "Installing elan (Lean version manager)..."
+    curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain stable
+
+    # Add to PATH for this session
+    export PATH="$HOME/.elan/bin:$PATH"
+
+    if has_cmd elan; then
+        log_ok "elan $(get_version elan) installed"
+    else
+        log_err "Failed to install elan"
+        return 1
+    fi
+}
+
+# Build the Lean project and fetch Mathlib cache
+ensure_lean_project() {
+    export PATH="$HOME/.elan/bin:$PATH"
+
+    if ! has_cmd lake; then
+        log_warn "lake not available (elan not installed?)"
+        return 1
+    fi
+
+    log_ok "lake ($(lake --version 2>&1 | head -1))"
+
+    if [[ "${CHECK_ONLY:-}" == "1" ]]; then
+        if [[ -d "ConnesLean/.lake" ]]; then
+            log_ok "Lean project exists"
+        else
+            log_warn "Lean project not built"
+        fi
+        return 0
+    fi
+
+    if [[ -d "ConnesLean" ]]; then
+        log_info "Fetching Mathlib cache..."
+        (cd ConnesLean && lake exe cache get 2>&1 | tail -1)
+        log_info "Building ConnesLean..."
+        (cd ConnesLean && lake build ConnesLean 2>&1 | tail -5)
+        log_ok "Lean project built"
+    else
+        log_warn "ConnesLean directory not found"
+        return 1
+    fi
+}
+
 # Install shellcheck (shell linter)
 ensure_shellcheck() {
     if has_cmd shellcheck; then
@@ -255,6 +313,8 @@ main() {
     ensure_precommit "$env" || ((++failed))
     ensure_jq || ((++failed))
     ensure_shellcheck || ((++failed))
+    ensure_elan || ((++failed))
+    ensure_lean_project || ((++failed))
 
     echo ""
     if [[ $failed -gt 0 ]]; then
