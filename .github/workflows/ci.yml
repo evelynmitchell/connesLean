@@ -21,15 +21,28 @@ jobs:
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
-      - name: Cache .lake and toolchains
+      # Cache Lean toolchain (elan)
+      - name: Cache elan
         uses: actions/cache@v4
         with:
           path: |
-            ConnesLean/.lake
             ~/.elan/toolchains
-          key: lake-${{ runner.os }}-${{ hashFiles('ConnesLean/lean-toolchain', 'ConnesLean/lakefile.toml', 'ConnesLean/lake-manifest.json') }}
+          key: ${{ runner.os }}-elan-${{ hashFiles('ConnesLean/lean-toolchain') }}
+
+      # Cache Lake (deps + build artifacts)
+      - name: Cache lake
+        uses: actions/cache@v4
+        with:
+          path: |
+            ConnesLean/.lake/packages
+            ConnesLean/.lake/build
+          key: ${{ runner.os }}-lake-${{ hashFiles('ConnesLean/lean-toolchain', 'ConnesLean/lake-manifest.json') }}
           restore-keys: |
-            lake-${{ runner.os }}-
+            ${{ runner.os }}-lake-
+
+      - name: Install lake deps
+        working-directory: ConnesLean
+        run: lake update
 
       - name: Build library
         working-directory: ConnesLean
