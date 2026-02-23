@@ -14,7 +14,7 @@ Create the Lean4 project structure:
 ConnesLean/
 ├── lakefile.toml
 ├── lean-toolchain
-├── ConnesLean.lean              # Root import file
+├── ConnesLean.lean                        # Root import file
 ├── ConnesLean/
 │   ├── Stage1/
 │   │   ├── MultiplicativeHaar.lean
@@ -24,8 +24,10 @@ ConnesLean/
 │   │   └── UnitaryIdentity.lean           # Lemma 2
 │   └── Common/
 │       └── Notation.lean
-└── test/
-    └── Stage1Tests.lean
+├── test/
+│   └── Stage1Tests.lean
+└── lspec/
+    └── Main.lean                          # LSpec executable runner
 ```
 
 Run:

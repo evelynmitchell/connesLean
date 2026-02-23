@@ -234,6 +234,7 @@ ensure_lean_project() {
             log_ok "Lean project exists"
         else
             log_warn "Lean project not built"
+            return 1
         fi
         return 0
     fi

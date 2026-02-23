@@ -48,6 +48,10 @@ jobs:
         working-directory: ConnesLean
         run: lake build ConnesLean
 
+      - name: Build compile-time tests
+        working-directory: ConnesLean
+        run: lake build test
+
       - name: Build LSpec tests
         working-directory: ConnesLean
         run: lake build connes_lspec

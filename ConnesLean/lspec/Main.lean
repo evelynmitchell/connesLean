@@ -15,6 +15,7 @@ issues for the computable-wrapper roadmap.
 -/
 
 import LSpec
+import ConnesLean
 
 open LSpec
 
@@ -24,7 +25,7 @@ namespace ConnesLean.LSpec
 def defaultNumSamples : Nat := 100
 
 /-- Stage 1 basic tests: unit checks and compile-time property tests
-    mirroring the RPos multiplicative group structure on Nat. -/
+    mirroring the RPos commutative monoid structure on Nat. -/
 def stage1Basics : TestSeq :=
   group "unit tests" (
     test "one is identity for mul" (1 * 5 = 5) $
@@ -34,13 +35,12 @@ def stage1Basics : TestSeq :=
     test "div_self concrete" (6 / 6 = 1) $
     test "Nat.succ_pos" (0 < Nat.succ 0)
   ) ++
-  group "property checks (multiplicative group axioms on Nat)" (
+  group "property checks (commutative monoid axioms on Nat)" (
     let t1 : TestSeq := check' "mul_comm" (∀ n m : Nat, n * m = m * n)
     let t2 : TestSeq := check' "mul_one" (∀ n : Nat, n * 1 = n)
     let t3 : TestSeq := check' "one_mul" (∀ n : Nat, 1 * n = n)
     let t4 : TestSeq := check' "mul_assoc" (∀ a b c : Nat, (a * b) * c = a * (b * c))
-    let t5 : TestSeq := check' "add_comm" (∀ n m : Nat, n + m = m + n)
-    t1 ++ t2 ++ t3 ++ t4 ++ t5
+    t1 ++ t2 ++ t3 ++ t4
   )
 
 end ConnesLean.LSpec
