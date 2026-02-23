@@ -24,3 +24,11 @@ name = "ConnesLean"
 [[lean_lib]]
 name = "test"
 globs = ["test"]
+
+[[lean_lib]]
+name = "lspec"
+globs = ["lspec"]
+
+[[lean_exe]]
+name = "connes_lspec"
+root = "lspec.Main"
