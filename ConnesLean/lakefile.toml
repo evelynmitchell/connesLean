@@ -1,0 +1,26 @@
+name = "ConnesLean"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["ConnesLean"]
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.28.0"
+
+[[require]]
+name = "LSpec"
+scope = "argumentcomputer"
+
+[[lean_lib]]
+name = "ConnesLean"
+
+[[lean_lib]]
+name = "test"
+globs = ["test"]

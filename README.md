@@ -5,7 +5,7 @@ The original proof is at https://github.com/octonion/mathematics/tree/main/conne
 
 The outline of the formalization is in outline.md 
 
-Each of the stages will be tracked with github issues.
+Each of the stages will be tracked with github issues. I use github codespaces for a dev environment, setup with bootstrap.sh
 
 The workflow I use is:
 
