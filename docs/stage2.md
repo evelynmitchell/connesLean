@@ -95,9 +95,9 @@ This file collects the support-tracking and orthogonality lemmas used by both th
 and archimedean decompositions. Corresponds to Remark 2 (rem:truncate, lines 222–233).
 
 **Key lemmas:**
-- `support_dilationOp`: `Function.support (dilationOp a g) = (· * a) ⁻¹' Function.support g`
-  (i.e., supp(U_a g) = a⁻¹ · supp(g) in multiplicative coordinates)
-- `support_translationOp`: `Function.support (translationOp t φ) = (· + t) ⁻¹' Function.support φ`
+- `support_dilationOp`: `Function.support (dilationOp a g) = (· / a) ⁻¹' Function.support g`
+  (i.e., supp(U_a g) = a · supp(g) in multiplicative coordinates)
+- `support_translationOp`: `Function.support (translationOp t φ) = (· - t) ⁻¹' Function.support φ`
   (i.e., supp(S_t φ) = t + supp(φ))
 - `inner_eq_zero_of_disjoint_support`: If `Function.support u` and `Function.support v` are
   disjoint, then `⟨u, v⟩ = 0`. (Integral of pointwise-zero integrand.)
@@ -177,7 +177,7 @@ and don't block the algebraic assembly in Step 6.
 |-------|-----------|-----------------|
 | `arch_tail_integrable` | `∫_{2L}^∞ 1/sinh(t) dt < ∞` | Comparison with `4e^{-t}` via `one_div_sinh_le` |
 | `arch_correction_integrable` | `∫₀^{2L} \|e^{-t/2} - 1\| w(t) dt < ∞` | Bound by `e^L/2` on compact `[0, 2L]` via `abs_exp_neg_half_sub_one_le` + `archWeight_le_inv_two_t` |
-| `archWeight_integrable_on` | `IntegrableOn w (Set.Ioc 0 (2*L))` | Bounded continuous on compact interval (singularity at 0 is removable after cancellation) |
+| `archWeight_mul_diffNormSq_integrable` | `IntegrableOn (fun t => w(t) * ‖G̃ - S_t G̃‖²) (Set.Ioc 0 (2*L))` | w(t) alone has 1/t singularity (not integrable), but ‖G̃ - S_t G̃‖² = O(t²) from translation continuity, giving O(t) product |
 
 **Measurability of the outer integrand:**
 - `measurable_norm_sub_translationOp_sq`: The map `t ↦ ‖G̃ - S_t G̃‖²` is measurable.
@@ -219,7 +219,7 @@ With the weight estimates isolated in Step 5, this file is now mostly algebraic
 5. **Collect** `‖G‖²`-proportional terms into `c_∞(λ)`.
 6. **Prove finiteness** of `c_∞(λ)` (sum of three finite quantities from Step 5 estimates).
 
-**References:** lamportform.tex lines 206–219 (W_R definition), 326–430 (lem:arch-energy).
+**References:** lamportform.tex lines 213–220 (W_R definition, eq. 3), 326–430 (lem:arch-energy).
 
 **Expected sorries:** 0–2. The hard work is in ArchimedeanWeight.lean. This file chains results.
 
@@ -227,7 +227,7 @@ With the weight estimates isolated in Step 5, this file is now mostly algebraic
 
 **File:** `EnergyForm.lean`
 
-**Definition (Definition 3.1, line 435):**
+**Definition (def:E, line 435):**
 ```
 E_λ(G) := ∫₀^{2L} w(t) ‖G̃ - S_t G̃‖² dt
          + Σ_{p prime, p≤λ²} Σ_{m≥1, p^m≤λ²} (log p) p^{-m/2} ‖G̃ - S_{m log p} G̃‖²
@@ -332,19 +332,23 @@ Stage 1 (complete)
   ├── expEquivRPos, haarMult, dilationOp
   ├── convolution_eq_inner, convolution_add_inv (Lemma 1)
   └── unitary_identity (Lemma 2)
-        │
-        ▼
-  TranslationOperator.lean ◄──── LogCoordinates.lean
-        │                              │
-        ▼                              ▼
-  SupportDisjointness.lean    ArchimedeanWeight.lean
-        │                              │
-        ▼                              ▼
-  PrimeDistribution.lean      ArchimedeanDistribution.lean
-        │                              │
-        └──────────┬───────────────────┘
-                   ▼
-            EnergyForm.lean
+               │
+               ▼
+      TranslationOperator.lean
+         │              │
+         ▼              ▼
+  LogCoordinates    ArchimedeanWeight
+         │              │
+         ▼              │
+  SupportDisjointness   │
+     │       │          │
+     ▼       │          ▼
+  Prime      │   ArchimedeanDistribution
+  Distribution   │
+     │           │
+     └─────┬─────┘
+           ▼
+     EnergyForm.lean
 ```
 
 ## Suggested implementation order
