@@ -253,9 +253,21 @@ ensure_lean_project() {
 
 # Install VS Code Lean 4 extension (LSP integration, Infoview, tactic suggestions)
 ensure_vscode_lean() {
+    local env="$1"
+
+    # Only install in environments where VS Code is the active editor
+    case "$env" in
+        vscode|codespaces|devcontainer)
+            ;;
+        *)
+            log_info "VS Code Lean 4 extension skipped ($env environment)"
+            return 0
+            ;;
+    esac
+
     if ! has_cmd code; then
-        log_info "VS Code CLI not available (not in a VS Code environment)"
-        return 0
+        log_warn "VS Code CLI 'code' not found on PATH"
+        return 1
     fi
 
     if code --list-extensions 2>/dev/null | grep -q 'leanprover.lean4'; then
@@ -344,7 +356,7 @@ main() {
     ensure_shellcheck || ((++failed))
     ensure_elan || ((++failed))
     ensure_lean_project || ((++failed))
-    ensure_vscode_lean || ((++failed))
+    ensure_vscode_lean "$env" || ((++failed))
 
     echo ""
     if [[ $failed -gt 0 ]]; then
