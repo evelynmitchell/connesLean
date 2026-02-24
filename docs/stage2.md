@@ -120,13 +120,20 @@ and archimedean decompositions. Corresponds to Remark 2 (rem:truncate, lines 222
 - `primeDistribution (p : ℕ) (hp : Nat.Prime p) (f : RPos → ℂ) : ℂ` — W_p(f) from eq. (2)
 - `primeConstant (p : ℕ) (λ : ℝ) : ℝ` — the constant c_p(λ)
 
-**Finite index set construction:**
-The sum `Σ_{m≥1, p^m ≤ λ²}` requires a `Finset`. Since `ℝ` has no `DecidableEq`,
-we cannot use `Finset.filter (fun m => (p : ℝ)^m ≤ λ^2)` directly.
+**Finite index set construction (both levels):**
+Both the outer sum over primes and the inner sum over exponents need `Finset` construction
+from real-valued bounds. Since `ℝ` has no `DecidableEq`, we cannot filter directly.
 
-Workaround: compute the upper bound `N := Nat.floor (2 * Real.log λ / Real.log p)` and
-use `Finset.Icc 1 N`. Then prove that `p^m ≤ λ²` iff `m ≤ N` via `Real.log` monotonicity.
-This coercion dance (Nat.floor, Real.log, Nat.cast) is fiddly but well-supported by Mathlib.
+Workaround — define shared helpers:
+- `primeBound (λ : ℝ) : ℕ := Nat.floor (λ^2)` — upper bound for prime index.
+  Outer Finset: `Finset.filter Nat.Prime (Finset.range (primeBound λ + 1))`.
+  Prove: `(p : ℝ) ≤ λ^2 ↔ p ≤ primeBound λ`.
+- `primeExponentBound (p : ℕ) (λ : ℝ) : ℕ := Nat.floor (2 * Real.log λ / Real.log p)` —
+  upper bound for exponent index.
+  Inner Finset: `Finset.Icc 1 (primeExponentBound p λ)`.
+  Prove: `(p : ℝ)^m ≤ λ^2 ↔ m ≤ primeExponentBound p λ` via `Real.log` monotonicity.
+
+These helpers are reused in `EnergyForm.lean` (Step 7) for the same double sum.
 
 **Key theorem (lem:prime-energy):**
 ```
@@ -255,10 +262,19 @@ where `C_λ = Σ_p c_p(λ) + c_∞(λ)` is a finite constant.
    to type-check. Requires proving that `t ↦ S_t φ` is continuous (or at least measurable)
    in the L² topology. Mathlib has the building blocks but no prebuilt lemma.
 
-4. **Finite sums over primes with real-valued bound.** The sum `Σ_{p prime, p≤λ²}` has a
-   real bound `λ²` but iterates over `ℕ`. Since `ℝ` has no `DecidableEq`, we cannot filter
-   directly. Workaround: compute `N := ⌊2 log λ / log p⌋` as `Nat` and use `Finset.Icc 1 N`.
-   The coercion dance (`Nat.floor`, `Real.log`, `Nat.cast`) is fiddly but Mathlib-supported.
+4. **Finite sums with real-valued bounds (both levels).** Two nested sums need `Finset`
+   construction from real bounds:
+   - **Outer sum over primes:** `Σ_{p prime, p ≤ λ²}` requires
+     `Finset.filter Nat.Prime (Finset.range (Nat.floor (λ^2) + 1))`. This needs
+     `Nat.floor` coercion from `ℝ` to `ℕ`, plus proof that `(p : ℝ) ≤ λ^2 ↔ p ≤ ⌊λ²⌋`.
+   - **Inner sum over powers:** `Σ_{m ≥ 1, p^m ≤ λ²}` requires
+     `Finset.Icc 1 (Nat.floor (2 * Real.log λ / Real.log p))`, plus proof that
+     `(p : ℝ)^m ≤ λ^2 ↔ m ≤ N` via `Real.log` monotonicity.
+   - Both levels involve the same `Nat.floor` / `Real.log` / `Nat.cast` coercion dance.
+     Factor into a shared helper: `primeExponentBound (p : ℕ) (λ : ℝ) : ℕ` and
+     `primeBound (λ : ℝ) : ℕ` with the corresponding iff lemmas.
+   - The `EnergyForm.lean` definition also has the same double sum, so these helpers
+     are used in Steps 4 and 7.
 
 ### Medium risk
 
