@@ -20,6 +20,7 @@ import ConnesLean.Stage1.MultiplicativeHaar
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Group.LIntegral
+import Mathlib.MeasureTheory.Function.L1Space.Integrable
 
 namespace ConnesLean
 
@@ -102,7 +103,79 @@ theorem inner_dilationOp_le (a : RPos) (g : RPos -> ℂ)
     (hg : MemLp g 2 haarMult) :
     ‖∫ x, g x * starRingEnd ℂ (dilationOp a g x) ∂haarMult‖ ≤
     (∫⁻ x, ‖g x‖₊ ^ (2 : ℝ) ∂haarMult).toReal := by
-  sorry
+  -- Build MeasurableEquiv for (· / a) on RPos
+  let divEquiv : RPos ≃ᵐ RPos := {
+    toEquiv := {
+      toFun := (· / a)
+      invFun := (· * a)
+      left_inv := fun y => by
+        ext; simp [RPos.div_val, div_mul_cancel₀ _ a.2.ne']
+      right_inv := fun y => by
+        ext; simp [RPos.div_val, mul_div_cancel_right₀ _ a.2.ne']
+    }
+    measurable_toFun := (measurable_subtype_coe.div_const a.val).subtype_mk
+    measurable_invFun := (measurable_subtype_coe.mul_const a.val).subtype_mk
+  }
+  -- MeasurePreserving for (· / a)
+  have h_mp : MeasurePreserving divEquiv haarMult haarMult := ⟨divEquiv.measurable, by
+    simp only [haarMult]
+    rw [Measure.map_map divEquiv.measurable measurable_expToRPos,
+        show (⇑divEquiv : RPos → RPos) ∘ expToRPos = expToRPos ∘ (· - logFromRPos a) from
+          funext (fun u => expToRPos_sub_log u a),
+        ← Measure.map_map measurable_expToRPos (measurable_sub_const _)]
+    congr 1
+    have : (· - logFromRPos a : ℝ → ℝ) = ((-logFromRPos a) + ·) := by funext x; ring
+    rw [this]
+    exact map_add_left_eq_self volume (-logFromRPos a)⟩
+  -- Integrability: g * star(g) is integrable by Hölder (L²×L² → L¹)
+  have h_int_prod : Integrable (fun x => g x * star (g x)) haarMult :=
+    hg.integrable_mul hg.star
+  -- Hence ‖g‖² is integrable (since ‖g x * star(g x)‖ = ‖g x‖²)
+  have h_int_sq : Integrable (fun x : RPos => ‖g x‖ ^ 2) haarMult :=
+    Integrable.congr h_int_prod.norm (Filter.Eventually.of_forall fun x => by
+      change ‖g x * star (g x)‖ = ‖g x‖ ^ 2
+      rw [norm_mul, norm_star, ← sq])
+  -- ‖g(·/a)‖² is integrable by measure preservation
+  have h_int_sq_a : Integrable (fun x : RPos => ‖g (x / a)‖ ^ 2) haarMult :=
+    h_mp.integrable_comp_of_integrable h_int_sq
+  -- Main calc chain
+  calc ‖∫ x, g x * starRingEnd ℂ (dilationOp a g x) ∂haarMult‖
+    -- Step 1: Triangle inequality
+      ≤ ∫ x, ‖g x * starRingEnd ℂ (dilationOp a g x)‖ ∂haarMult :=
+        norm_integral_le_integral_norm _
+    -- Step 2: Pointwise ‖g·conj(g(·/a))‖ = ‖g‖·‖g(·/a)‖
+    _ = ∫ x, ‖g x‖ * ‖g (x / a)‖ ∂haarMult := by
+        congr 1; ext x
+        rw [dilationOp_apply, norm_mul, starRingEnd_apply, norm_star]
+    -- Step 3: AM-GM pointwise: ab ≤ (a² + b²)/2
+    _ ≤ ∫ x, (‖g x‖ ^ 2 + ‖g (x / a)‖ ^ 2) / 2 ∂haarMult := by
+        apply integral_mono_of_nonneg
+        · exact Filter.Eventually.of_forall fun x => mul_nonneg (norm_nonneg _) (norm_nonneg _)
+        · exact (h_int_sq.add h_int_sq_a).div_const 2
+        · exact Filter.Eventually.of_forall fun x => by
+            nlinarith [sq_nonneg (‖g x‖ - ‖g (x / a)‖), sq_abs ‖g x‖, sq_abs ‖g (x / a)‖]
+    -- Step 4: Split integral: ∫(f+g)/2 = (∫f + ∫g)/2
+    _ = (∫ x, ‖g x‖ ^ 2 ∂haarMult + ∫ x, ‖g (x / a)‖ ^ 2 ∂haarMult) / 2 := by
+        rw [integral_div, integral_add h_int_sq h_int_sq_a]
+    -- Step 5: Change of variables: ∫ ‖g(·/a)‖² = ∫ ‖g‖²
+    _ = (∫ x, ‖g x‖ ^ 2 ∂haarMult + ∫ x, ‖g x‖ ^ 2 ∂haarMult) / 2 := by
+        congr 1; congr 1
+        have h_eq : ∀ y : RPos, ⇑divEquiv y = y / a := fun _ => rfl
+        simp_rw [show ∀ x : RPos, ‖g (x / a)‖ ^ 2 = ‖g (⇑divEquiv x)‖ ^ 2 from
+          fun x => by rw [h_eq]]
+        exact h_mp.integral_comp' (fun x => ‖g x‖ ^ 2)
+    -- Step 6: (T + T) / 2 = T
+    _ = ∫ x, ‖g x‖ ^ 2 ∂haarMult := by ring
+    -- Step 7: Convert Bochner integral to lintegral
+    _ = (∫⁻ x, ‖g x‖₊ ^ (2 : ℝ) ∂haarMult).toReal := by
+        rw [integral_eq_lintegral_of_nonneg_ae
+          (Filter.Eventually.of_forall fun x => sq_nonneg _)
+          (hg.aestronglyMeasurable.norm.aemeasurable.pow_const _).aestronglyMeasurable]
+        congr 1; apply lintegral_congr; intro x
+        have h_two : (2 : ℝ) = ((2 : ℕ) : ℝ) := by simp
+        rw [← Real.rpow_natCast _ 2, ← h_two,
+          ← ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) zero_le_two, ofReal_norm_eq_enorm]
+        norm_cast
 
 end
 
