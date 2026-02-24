@@ -48,6 +48,16 @@ jobs:
         working-directory: ConnesLean
         run: lake exe cache get
 
+      - name: Check for sorry
+        working-directory: ConnesLean
+        run: |
+          # Fail if any .lean file contains the sorry keyword (excluding .lake/ deps).
+          # To reference the concept in comments, use "sorries" (plural) instead.
+          if grep -rnw 'sorry' . --include='*.lean' --exclude-dir='.lake'; then
+            echo "::error::sorry found in source files"
+            exit 1
+          fi
+
       - name: Build library
         working-directory: ConnesLean
         run: lake build ConnesLean

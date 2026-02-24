@@ -251,6 +251,46 @@ ensure_lean_project() {
     fi
 }
 
+# Install VS Code Lean 4 extension (LSP integration, Infoview, tactic suggestions)
+ensure_vscode_lean() {
+    local env="$1"
+
+    # Only install in environments where VS Code is the active editor
+    case "$env" in
+        vscode|codespaces|devcontainer)
+            ;;
+        *)
+            log_info "VS Code Lean 4 extension skipped ($env environment)"
+            return 0
+            ;;
+    esac
+
+    if ! has_cmd code; then
+        log_warn "VS Code CLI 'code' not found on PATH"
+        return 1
+    fi
+
+    if code --list-extensions 2>/dev/null | grep -q 'leanprover.lean4'; then
+        log_ok "VS Code Lean 4 extension"
+        return 0
+    fi
+
+    if [[ "${CHECK_ONLY:-}" == "1" ]]; then
+        log_warn "VS Code Lean 4 extension not installed"
+        return 1
+    fi
+
+    log_info "Installing VS Code Lean 4 extension..."
+    code --install-extension leanprover.lean4
+
+    if code --list-extensions 2>/dev/null | grep -q 'leanprover.lean4'; then
+        log_ok "VS Code Lean 4 extension installed"
+    else
+        log_warn "VS Code Lean 4 extension installation may have failed"
+        return 1
+    fi
+}
+
 # Install shellcheck (shell linter)
 ensure_shellcheck() {
     if has_cmd shellcheck; then
@@ -379,6 +419,7 @@ main() {
     ensure_ripgrep || ((++failed))
     ensure_elan || ((++failed))
     ensure_lean_project || ((++failed))
+    ensure_vscode_lean "$env" || ((++failed))
     ensure_lean_lsp_mcp "$env" || ((++failed))
 
     echo ""
