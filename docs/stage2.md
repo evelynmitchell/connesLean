@@ -302,7 +302,7 @@ All required constructs exist in Mathlib v4.28.0:
 
 1. `lake build ConnesLean` compiles without errors
 2. `grep -rn sorry ConnesLean/Stage2/` to audit remaining sorries
-3. CI sorry regression check passes (added in Stage 1)
+3. CI sorry regression check passes (added in this PR, between Stages 1 and 2)
 4. Each file has a module docstring referencing the corresponding section/lemma in `lamportform.tex`
 5. Stage 1 definitions and theorems import cleanly into Stage 2 files
 6. Integrability lemmas are proved before any integral rearrangement that depends on them

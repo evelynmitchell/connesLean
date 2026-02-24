@@ -1,83 +1,52 @@
-Here's a list of the base operator properties:
+# Operator Properties to Test
 
-Symmetric, densely defined quadratic form  on 
+Base operator properties for the restricted Weil quadratic form E_lambda
+and its associated self-adjoint generator H_lambda on L^2(I).
 
-Closed (lower semicontinuous) form
+## Core properties
 
-Semibounded / nonnegative form
+1. Symmetric, densely defined quadratic form E_lambda on L^2(I)
+2. Closed (lower semicontinuous) form
+3. Semibounded / nonnegative form
+4. Markov (Dirichlet form; normal contraction property)
+5. Beurling-Deny pure-jump structure (difference-energy / jump form)
+6. Selfadjoint generator H_lambda (Friedrichs/Kato representation)
+7. Sub-Markovian / positivity-preserving semigroup e^{-tH}
+8. Irreducibility (no nontrivial invariant closed ideals)
+9. Positivity improving semigroup (for t > 0)
+10. Compact resolvent
+11. Discrete spectrum (pure point; finite multiplicities; only accumulation at +infinity)
+12. Existence of ground-state eigenvalue lambda_0
+13. Ground state strictly positive a.e.
+14. Ground state eigenvalue simple
+15. Reflection symmetry (commutes with parity operator)
+16. Even/odd invariant subspace decomposition
+17. Ground state even
+18. Spectral gap above ground state (strict inequality lambda_1 > lambda_0)
+19. Variational/min-max characterization of eigenvalues
+20. Rayleigh-Ritz/Galerkin upper bounds; monotone convergence with form-dense subspaces
+21. Stability under bounded perturbations (selfadjointness and compact resolvent preserved)
+22. Finite-rank perturbation determinant/Birman-Schwinger characterization (when applicable)
+23. Whole-line translation-invariant extension with explicit Levy symbol psi(xi)
+24. Fourier-multiplier representation on L^2(R) (Levy-Khintchine form)
+25. Spectral zeta function and regularized determinant/canonical product (existence)
 
-Markov (Dirichlet form; normal contraction property)
+## Ordered by importance for proving even / simple ground state
 
-Beurling–Deny pure-jump structure (difference-energy / jump form)
+Tagging hard items:
 
-Selfadjoint generator  (Friedrichs/Kato representation)
-
-Sub-Markovian / positivity-preserving semigroup 
-
-Irreducibility (no nontrivial invariant closed ideals)
-
-Positivity improving semigroup (for )
-
-Compact resolvent
-
-Discrete spectrum (pure point; finite multiplicities; only accumulation at )
-
-Existence of ground-state eigenvalue 
-
-Ground state strictly positive a.e.
-
-Ground state eigenvalue simple
-
-Reflection symmetry (commutes with parity operator)
-
-Even/odd invariant subspace decomposition
-
-Ground state even
-
-Spectral gap above ground state (strict inequality )
-
-Variational/min–max characterization of eigenvalues
-
-Rayleigh–Ritz/Galerkin upper bounds; monotone convergence with form-dense subspaces
-
-Stability under bounded perturbations (selfadjointness and compact resolvent preserved)
-
-Finite-rank perturbation determinant/Birman–Schwinger characterization (when applicable)
-
-Whole-line translation-invariant extension with explicit Lévy symbol 
-
-Fourier-multiplier representation on  (Lévy–Khintchine form)
-
-Spectral zeta function and regularized determinant/canonical product (existence)
-
-Ordered by importance for proving even / simple, tagging hard:
-
-Parity symmetry; even/odd block decomposition
-
-Finite-rank pole term; rank-two → two rank-one updates after parity diagonalization
-
-Birman–Schwinger / Weinstein–Aronszajn scalar/determinant characterization
-
-Positivity improving semigroup for the base operator (Perron–Frobenius leverage) hard
-
-Base ground state strictly positive a.e. hard
-
-Base ground state eigenvalue simple hard
-
-Irreducibility (enables positivity improving in the killed setting) hard
-
-Markov/Dirichlet-form property (enables the positive semigroup framework) hard
-
-Compact resolvent (discrete spectrum; needed for PF + eigen-expansions)
-
-Resolvent domination/comparison (killed interval vs whole-line)
-
-Whole-line translation-invariant extension with explicit symbol 
-
-Archimedean log-growth coercivity bound for 
-
-Variational/min–max principle
-
-Rayleigh–Ritz/Galerkin monotone upper bounds (parity-separated)
-
-Stability of compact resolvent under bounded perturbations
+1. Parity symmetry; even/odd block decomposition
+2. Finite-rank pole term; rank-two -> two rank-one updates after parity diagonalization
+3. Birman-Schwinger / Weinstein-Aronszajn scalar/determinant characterization
+4. Positivity improving semigroup for the base operator (Perron-Frobenius leverage) **hard**
+5. Base ground state strictly positive a.e. **hard**
+6. Base ground state eigenvalue simple **hard**
+7. Irreducibility (enables positivity improving in the killed setting) **hard**
+8. Markov/Dirichlet-form property (enables the positive semigroup framework) **hard**
+9. Compact resolvent (discrete spectrum; needed for PF + eigen-expansions)
+10. Resolvent domination/comparison (killed interval vs whole-line)
+11. Whole-line translation-invariant extension with explicit symbol psi(xi)
+12. Archimedean log-growth coercivity bound for psi(xi)
+13. Variational/min-max principle
+14. Rayleigh-Ritz/Galerkin monotone upper bounds (parity-separated)
+15. Stability of compact resolvent under bounded perturbations
