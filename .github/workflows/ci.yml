@@ -48,6 +48,14 @@ jobs:
         working-directory: ConnesLean
         run: lake exe cache get
 
+      - name: Check for sorry
+        working-directory: ConnesLean
+        run: |
+          if grep -rn '\bsorry\b' ConnesLean/ --include='*.lean' | grep -v '^.*:.*--.*sorry'; then
+            echo "::error::sorry found in source files"
+            exit 1
+          fi
+
       - name: Build library
         working-directory: ConnesLean
         run: lake build ConnesLean
