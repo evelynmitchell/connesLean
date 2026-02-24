@@ -83,6 +83,13 @@ theorem expToRPos_logFromRPos (x : RPos) : expToRPos (logFromRPos x) = x := by
   ext
   simp [logFromRPos, expToRPos, exp_log x.property]
 
+/-- Division by `a` on `RPos` conjugates to subtraction of `log a` on `ℝ` via `exp`. -/
+theorem expToRPos_sub_log (u : ℝ) (a : RPos) :
+    expToRPos u / a = expToRPos (u - logFromRPos a) := by
+  ext
+  simp only [RPos.div_val, expToRPos, logFromRPos]
+  rw [exp_sub, exp_log a.property]
+
 /-- Measurability of the exponential map to `RPos`. -/
 theorem measurable_expToRPos : Measurable expToRPos :=
   continuous_exp.measurable.subtype_mk
