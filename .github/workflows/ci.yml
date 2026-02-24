@@ -51,10 +51,9 @@ jobs:
       - name: Check for sorry
         working-directory: ConnesLean
         run: |
-          # Fail if any source file contains the sorry keyword.
-          # This catches sorry in code, comments, and block comments alike.
+          # Fail if any .lean file contains the sorry keyword (excluding .lake/ deps).
           # To reference the concept in comments, use "sorries" (plural) instead.
-          if grep -rn '\bsorry\b' ConnesLean/ --include='*.lean'; then
+          if grep -rnw 'sorry' . --include='*.lean' --exclude-dir='.lake'; then
             echo "::error::sorry found in source files"
             exit 1
           fi

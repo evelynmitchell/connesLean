@@ -1,11 +1,11 @@
 # Operator Properties to Test
 
 Base operator properties for the restricted Weil quadratic form E_lambda
-and its associated self-adjoint generator H_lambda on L^2(I).
+and its associated self-adjoint generator H_lambda on L²(I).
 
 ## Core properties
 
-1. Symmetric, densely defined quadratic form E_lambda on L^2(I)
+1. Symmetric, densely defined quadratic form E_lambda on L²(I)
 2. Closed (lower semicontinuous) form
 3. Semibounded / nonnegative form
 4. Markov (Dirichlet form; normal contraction property)
@@ -28,7 +28,7 @@ and its associated self-adjoint generator H_lambda on L^2(I).
 21. Stability under bounded perturbations (selfadjointness and compact resolvent preserved)
 22. Finite-rank perturbation determinant/Birman-Schwinger characterization (when applicable)
 23. Whole-line translation-invariant extension with explicit Levy symbol psi(xi)
-24. Fourier-multiplier representation on L^2(R) (Levy-Khintchine form)
+24. Fourier-multiplier representation on L²(R) (Levy-Khintchine form)
 25. Spectral zeta function and regularized determinant/canonical product (existence)
 
 ## Ordered by importance for proving even / simple ground state

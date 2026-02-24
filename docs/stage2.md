@@ -20,7 +20,9 @@ Blocked by Stage 1 (complete, 0 sorries). Blocks Stage 3 (Markov property, irred
    as a single lemma instead of reproving it per use.
 
 4. **Integrability is the hard part.** Isolate integrability/convergence conditions as
-   explicit sorry stubs. These are the last things to close (same pattern as Stage 1).
+   separate lemmas with clear statements. On feature branches these may use `sorry`
+   during development, but CI blocks merging any `sorry` to main. Track outstanding
+   proof obligations via GitHub issues (same pattern as Stage 1).
 
 5. **Finite sums before continuous integrals.** The prime decomposition is algebraic;
    the archimedean decomposition has real singularity analysis. Do them in that order.
