@@ -40,6 +40,31 @@ example (a : RPos) (g : RPos → ℂ) : dilationOp a⁻¹ (dilationOp a g) = g :
 example (g : RPos → ℂ) : mulInvol (mulInvol g) = g :=
   mulInvol_involutive g
 
+/-! ## Convolution tests -/
+
+/-- Test that `mulConv g (mulInvol g)` expands to `∫ g(y) * conj(g(y/a)) d*y`. -/
+example (g : RPos → ℂ) (a : RPos) :
+    mulConv g (mulInvol g) a =
+    ∫ y, g y * starRingEnd ℂ (g (y / a)) ∂haarMult :=
+  mulConv_mulInvol_apply g a
+
+/-- Test that the convolution integrand is integrable for `g ∈ L²(d*x)`. -/
+example (g : RPos → ℂ) (hg : MeasureTheory.MemLp g 2 haarMult) (a : RPos) :
+    MeasureTheory.Integrable (fun y => g y * starRingEnd ℂ (g (y / a))) haarMult :=
+  mulConv_mulInvol_integrable g hg a
+
+/-- Test that `(g ⋆ g*)(a) = ⟨g, U_a g⟩`. -/
+example (g : RPos → ℂ) (a : RPos) :
+    mulConv g (mulInvol g) a =
+    ∫ y, g y * starRingEnd ℂ (dilationOp a g y) ∂haarMult :=
+  convolution_eq_inner g a
+
+/-- Test that `f(1) = ‖g‖²`. -/
+example (g : RPos → ℂ) (hg : MeasureTheory.MemLp g 2 haarMult) :
+    mulConv g (mulInvol g) 1 =
+    ↑(∫⁻ x, ‖g x‖₊ ^ (2 : ℝ) ∂haarMult).toReal :=
+  convolution_at_one g hg
+
 /-! ## Unitary identity tests -/
 
 /-- Test the unitary identity corollary for the identity (trivial case):
