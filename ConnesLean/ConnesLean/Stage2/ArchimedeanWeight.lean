@@ -18,7 +18,7 @@ Key estimates:
 - `w(t) ≤ exp(t/2) / (2t)` for `t > 0`
 - `2 exp(-t/2) w(t) = 1 / sinh t` (cancellation identity)
 - `1/sinh(t) < 4 exp(-t)` for `t ≥ 1`
-- Integrability of the correction terms on compact `[0, 2L]` and tail `[2L, ∞)`
+- (Later) integrability of the correction terms on compact `[0, 2L]` and tail `[2L, ∞)`
 -/
 
 import ConnesLean.Stage2.SupportDisjointness
@@ -160,13 +160,12 @@ def archEnergyIntegral (G : ℝ → ℂ) (L : ℝ) : ENNReal :=
 
 /-- The archimedean constant `c_∞(λ)`:
     `c_∞(λ) = -(log 4π + γ) + ∫₀^{2L} 2(e^{-t/2} - 1) w(t) dt
-                                + ∫_{2L}^∞ 2 e^{-t/2} w(t) dt`
+                                + ∫_{2L}^∞ 2 e^{-t/2} w(t) dt`,
     where `L = log cutoffLambda`.
 
-    Both integrals converge (Step 7.2 and Step 8.2 of lamportform.tex),
-    so `c_∞(λ) ∈ ℝ`.
-
-    Reference: lamportform.tex, Step 9, line ~420. -/
+    This definition matches the expression used in lamportform.tex
+    (Steps 7.2, 8.2, and 9, around line ~420); analytic convergence of
+    the two integrals is treated there and in subsequent lemmas. -/
 def archConstant (cutoffLambda : ℝ) : ℝ :=
   let L := Real.log cutoffLambda
   let emConst := Real.eulerMascheroniConstant
