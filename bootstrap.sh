@@ -281,6 +281,68 @@ ensure_shellcheck() {
     fi
 }
 
+# Install ripgrep (needed by lean-lsp-mcp local search)
+ensure_ripgrep() {
+    if has_cmd rg; then
+        log_ok "ripgrep $(get_version rg)"
+        return 0
+    fi
+
+    if [[ "${CHECK_ONLY:-}" == "1" ]]; then
+        log_warn "ripgrep not installed"
+        return 1
+    fi
+
+    log_info "Installing ripgrep..."
+    if has_cmd apt-get; then
+        sudo apt-get update -qq && sudo apt-get install -y -qq ripgrep
+    elif has_cmd brew; then
+        brew install ripgrep
+    else
+        log_warn "Cannot install ripgrep: no apt or brew"
+        return 1
+    fi
+
+    if has_cmd rg; then
+        log_ok "ripgrep $(get_version rg) installed"
+    else
+        log_err "Failed to install ripgrep"
+        return 1
+    fi
+}
+
+# Configure lean-lsp-mcp server for Claude Code
+ensure_lean_lsp_mcp() {
+    local env="$1"
+
+    # Only relevant when Claude Code is available
+    if ! has_cmd claude; then
+        log_info "lean-lsp-mcp skipped (claude not available)"
+        return 0
+    fi
+
+    # Check if already configured
+    if [[ -f ".mcp.json" ]] && has_cmd jq && jq -e '.mcpServers["lean-lsp"]' .mcp.json &>/dev/null; then
+        log_ok "lean-lsp-mcp configured"
+        return 0
+    fi
+
+    if [[ "${CHECK_ONLY:-}" == "1" ]]; then
+        log_warn "lean-lsp-mcp not configured"
+        return 1
+    fi
+
+    log_info "Adding lean-lsp-mcp server to Claude Code..."
+    claude mcp add lean-lsp -s project -- uvx lean-lsp-mcp
+
+    if [[ -f ".mcp.json" ]] && has_cmd jq && jq -e '.mcpServers["lean-lsp"]' .mcp.json &>/dev/null; then
+        log_ok "lean-lsp-mcp configured"
+    else
+        log_warn "lean-lsp-mcp configuration may have failed"
+        return 1
+    fi
+}
+
 # Main
 main() {
     local check_only=0
@@ -314,8 +376,10 @@ main() {
     ensure_precommit "$env" || ((++failed))
     ensure_jq || ((++failed))
     ensure_shellcheck || ((++failed))
+    ensure_ripgrep || ((++failed))
     ensure_elan || ((++failed))
     ensure_lean_project || ((++failed))
+    ensure_lean_lsp_mcp "$env" || ((++failed))
 
     echo ""
     if [[ $failed -gt 0 ]]; then

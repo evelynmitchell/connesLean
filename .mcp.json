@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "lean-lsp": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "lean-lsp-mcp"
+      ],
+      "env": {
+        "LEAN_PROJECT_PATH": "/workspaces/connesLean/ConnesLean",
+        "PATH": "/home/codespace/.elan/bin:/home/codespace/.local/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    }
+  }
+}
