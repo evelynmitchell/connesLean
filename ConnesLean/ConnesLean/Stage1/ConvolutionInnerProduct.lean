@@ -65,38 +65,16 @@ theorem convolution_inv_eq_conj (g : RPos → ℂ) (a : RPos)
       (starRingEnd ℂ) (g y) * g (y / a) from fun y => by
     rw [map_mul]; congr 1; exact star_star (g (y / a))]
   -- Goal: ∫ g(y) * conj(g(y*a)) d*y = ∫ conj(g(y)) * g(y/a) d*y
-  -- Step 4: Build MeasurableEquiv for (· / a) on RPos
-  let divEquiv : RPos ≃ᵐ RPos := {
-    toEquiv := {
-      toFun := (· / a)
-      invFun := (· * a)
-      left_inv := fun y => by
-        ext; simp [RPos.div_val, div_mul_cancel₀ _ a.2.ne']
-      right_inv := fun y => by
-        ext; simp [RPos.div_val, mul_div_cancel_right₀ _ a.2.ne']
-    }
-    measurable_toFun := (measurable_subtype_coe.div_const a.val).subtype_mk
-    measurable_invFun := (measurable_subtype_coe.mul_const a.val).subtype_mk
-  }
-  -- Step 5: Show divEquiv preserves haarMult
-  have h_mp : MeasurePreserving divEquiv haarMult haarMult := ⟨divEquiv.measurable, by
-    simp only [haarMult]
-    rw [Measure.map_map divEquiv.measurable measurable_expToRPos,
-        show (⇑divEquiv : RPos → RPos) ∘ expToRPos = expToRPos ∘ (· - logFromRPos a) from
-          funext (fun u => expToRPos_sub_log u a),
-        ← Measure.map_map measurable_expToRPos (measurable_sub_const _)]
-    congr 1
-    have : (· - logFromRPos a : ℝ → ℝ) = ((-logFromRPos a) + ·) := by funext x; ring
-    rw [this]
-    exact map_add_left_eq_self volume (-logFromRPos a)⟩
-  -- Step 6: Change of variables y ↦ y/a on LHS via integral_comp'
+  -- Step 4: Use the shared division equivalence and measure preservation
+  have h_mp : MeasurePreserving (rpDivEquiv a) haarMult haarMult :=
+    measurePreserving_rpDiv a
+  -- Step 5: Change of variables y ↦ y/a on LHS via integral_comp'
   -- ← integral_comp' rewrites ∫ h(y) d*y to ∫ h(y/a) d*y
   rw [← h_mp.integral_comp' (fun y => g y * (starRingEnd ℂ) (g (y * a)))]
-  -- Unfold divEquiv (y/a) and simplify y/a * a = y, then use commutativity
-  have h_eq : ∀ y : RPos, ⇑divEquiv y = y / a := fun _ => rfl
+  -- Unfold rpDivEquiv (y/a) and simplify y/a * a = y, then use commutativity
   have h_cancel : ∀ y : RPos, y / a * a = y := fun y => by
     ext; simp [RPos.div_val, div_mul_cancel₀ _ a.2.ne']
-  simp_rw [h_eq, h_cancel]
+  simp_rw [rpDivEquiv_apply, h_cancel]
   congr 1; ext y; exact mul_comm (G := ℂ) _ _
 
 /-- **Lemma 1, Part 3**: `f(a) + f(a⁻¹) = 2 Re⟨g, U_a g⟩`.
