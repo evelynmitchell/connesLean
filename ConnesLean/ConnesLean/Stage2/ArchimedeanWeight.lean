@@ -149,17 +149,39 @@ theorem correction_integrand_bound {t L : ℝ} (ht : 0 < t) (_htL : t ≤ 2 * L)
     Reference: lamportform.tex, Step 7.2. -/
 theorem arch_tail_integrable {L : ℝ} (hL : 1 / 2 ≤ L) :
     IntegrableOn (fun t => 1 / Real.sinh t) (Ioi (2 * L)) volume := by
-  sorry
+  apply Integrable.mono' ((integrableOn_exp_neg_Ioi (2 * L)).const_mul 4)
+  · exact (measurable_const.div Real.measurable_sinh).aestronglyMeasurable.restrict
+  · rw [ae_restrict_iff' measurableSet_Ioi]
+    exact Filter.Eventually.of_forall fun t ht => by
+      simp only [mem_Ioi] at ht
+      have h1 : 1 ≤ t := by linarith
+      have hsinh_pos : 0 < Real.sinh t := sinh_pos_of_pos (by linarith)
+      rw [Real.norm_of_nonneg (div_nonneg (by norm_num) (le_of_lt hsinh_pos))]
+      exact le_of_lt (one_div_sinh_lt_four_exp_neg h1)
 
 /-- The correction integrand `2(exp(-t/2) - 1) w(t)` is integrable on `(0, 2L]`.
     By `correction_integrand_bound`, the integrand is bounded by `exp(L)/2`
     on this set, and `Ioc 0 (2L)` has finite Lebesgue measure.
 
     Reference: lamportform.tex, Step 8.2. -/
-theorem arch_correction_integrable {L : ℝ} (hL : 0 < L) :
+theorem arch_correction_integrable {L : ℝ} (_hL : 0 < L) :
     IntegrableOn (fun t => 2 * (Real.exp (-t / 2) - 1) * archWeight t)
       (Ioc 0 (2 * L)) volume := by
-  sorry
+  refine IntegrableOn.of_bound measure_Ioc_lt_top ?_ (Real.exp L / 2) ?_
+  · exact ((measurable_const.mul
+      ((Real.measurable_exp.comp (measurable_neg.div_const 2)).sub measurable_const)).mul
+      ((Real.measurable_exp.comp (measurable_id.div_const 2)).div
+        (measurable_const.mul Real.measurable_sinh))).aestronglyMeasurable.restrict
+  · rw [ae_restrict_iff' measurableSet_Ioc]
+    exact Filter.Eventually.of_forall fun t ht => by
+      simp only [mem_Ioc] at ht
+      have h_bound := correction_integrand_bound ht.1 ht.2
+      calc ‖2 * (Real.exp (-t / 2) - 1) * archWeight t‖
+          = |2 * (Real.exp (-t / 2) - 1) * archWeight t| := Real.norm_eq_abs _
+        _ ≤ Real.exp (t / 2) / 2 := h_bound
+        _ ≤ Real.exp L / 2 := by
+            apply div_le_div_of_nonneg_right _ (by norm_num)
+            exact Real.exp_le_exp.mpr (by linarith [ht.2])
 
 /-- The map `t ↦ ‖G̃ - S_t G̃‖²` is measurable as a function of `t`.
     This is a prerequisite for the outer integral in the energy decomposition
@@ -168,7 +190,11 @@ theorem arch_correction_integrable {L : ℝ} (hL : 0 < L) :
 theorem measurable_archEnergyIntegrand {G : ℝ → ℂ} (hG : Measurable G) (L : ℝ) :
     Measurable (fun t => ∫⁻ u, ‖zeroExtend G (logInterval L) u -
       translationOp t (zeroExtend G (logInterval L)) u‖₊ ^ (2 : ℝ) ∂volume) := by
-  sorry
+  apply Measurable.lintegral_prod_right
+  have h_ze : Measurable (zeroExtend G (logInterval L)) :=
+    Measurable.indicator hG (measurableSet_logInterval L)
+  exact (((h_ze.comp measurable_snd).sub
+    (h_ze.comp (measurable_snd.sub measurable_fst))).nnnorm.coe_nnreal_ennreal.pow_const _)
 
 /-! ## Archimedean energy integrand -/
 
