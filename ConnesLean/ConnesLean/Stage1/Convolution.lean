@@ -78,19 +78,8 @@ theorem mulConv_mulInvol_integrable (g : RPos → ℂ)
     (hg : MemLp g 2 haarMult) (a : RPos) :
     Integrable (fun y => g y * starRingEnd ℂ (g (y / a))) haarMult := by
   -- Step 1: Division by `a` is measure-preserving on (RPos, haarMult)
-  have h_div_meas : Measurable (· / a : RPos → RPos) :=
-    (measurable_subtype_coe.div_const a.val).subtype_mk
-  have h_mp : MeasurePreserving (· / a) haarMult haarMult := ⟨h_div_meas, by
-    simp only [haarMult]
-    rw [Measure.map_map h_div_meas measurable_expToRPos,
-        show (· / a : RPos → RPos) ∘ expToRPos = expToRPos ∘ (· - logFromRPos a) from
-          funext (fun u => expToRPos_sub_log u a),
-        ← Measure.map_map measurable_expToRPos (measurable_sub_const _)]
-    congr 1
-    have : (· - logFromRPos a : ℝ → ℝ) = ((-logFromRPos a) + ·) := by
-      funext x; ring
-    rw [this]
-    exact map_add_left_eq_self volume (-logFromRPos a)⟩
+  have h_mp : MeasurePreserving (rpDivEquiv a) haarMult haarMult :=
+    measurePreserving_rpDiv a
   -- Step 2: g ∘ (· / a) ∈ L², hence star(g ∘ (· / a)) ∈ L²
   have h_conj : MemLp (star (g ∘ (· / a))) 2 haarMult :=
     (hg.comp_measurePreserving h_mp).star

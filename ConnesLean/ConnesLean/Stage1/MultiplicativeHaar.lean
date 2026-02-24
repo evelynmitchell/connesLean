@@ -154,6 +154,42 @@ theorem haarMult_mul_invariant (a : RPos) (S : Set RPos) (hS : MeasurableSet S) 
       ← Measure.map_apply (measurable_const_add _) (measurable_expToRPos hS),
       map_add_left_eq_self]
 
+/-! ## Division equivalence and measure preservation -/
+
+/-- The measurable equivalence `x ↦ x / a` on `RPos`, with inverse `x ↦ x * a`.
+    This is the core change-of-variables map underlying dilation operators and
+    convolution identities on `(R_+*, d*x)`. -/
+def rpDivEquiv (a : RPos) : RPos ≃ᵐ RPos where
+  toEquiv := {
+    toFun := (· / a)
+    invFun := (· * a)
+    left_inv := fun y => by
+      ext; simp [RPos.div_val, div_mul_cancel₀ _ a.2.ne']
+    right_inv := fun y => by
+      ext; simp [RPos.div_val, mul_div_cancel_right₀ _ a.2.ne']
+  }
+  measurable_toFun := (measurable_subtype_coe.div_const a.val).subtype_mk
+  measurable_invFun := (measurable_subtype_coe.mul_const a.val).subtype_mk
+
+@[simp]
+theorem rpDivEquiv_apply (a : RPos) (y : RPos) : rpDivEquiv a y = y / a := rfl
+
+/-- Division by `a` preserves the multiplicative Haar measure on `RPos`.
+    This is the change-of-variables identity `d*(x/a) = d*x`, proved by
+    conjugating through `exp` to Lebesgue translation invariance on `ℝ`. -/
+theorem measurePreserving_rpDiv (a : RPos) :
+    MeasurePreserving (rpDivEquiv a) haarMult haarMult :=
+  ⟨(rpDivEquiv a).measurable, by
+    simp only [haarMult]
+    rw [Measure.map_map (rpDivEquiv a).measurable measurable_expToRPos,
+        show (⇑(rpDivEquiv a) : RPos → RPos) ∘ expToRPos = expToRPos ∘ (· - logFromRPos a) from
+          funext (fun u => expToRPos_sub_log u a),
+        ← Measure.map_map measurable_expToRPos (measurable_sub_const _)]
+    congr 1
+    have : (· - logFromRPos a : ℝ → ℝ) = ((-logFromRPos a) + ·) := by funext x; ring
+    rw [this]
+    exact map_add_left_eq_self volume (-logFromRPos a)⟩
+
 end
 
 end ConnesLean

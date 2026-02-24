@@ -103,30 +103,9 @@ theorem inner_dilationOp_le (a : RPos) (g : RPos -> ℂ)
     (hg : MemLp g 2 haarMult) :
     ‖∫ x, g x * starRingEnd ℂ (dilationOp a g x) ∂haarMult‖ ≤
     (∫⁻ x, ‖g x‖₊ ^ (2 : ℝ) ∂haarMult).toReal := by
-  -- Build MeasurableEquiv for (· / a) on RPos
-  let divEquiv : RPos ≃ᵐ RPos := {
-    toEquiv := {
-      toFun := (· / a)
-      invFun := (· * a)
-      left_inv := fun y => by
-        ext; simp [RPos.div_val, div_mul_cancel₀ _ a.2.ne']
-      right_inv := fun y => by
-        ext; simp [RPos.div_val, mul_div_cancel_right₀ _ a.2.ne']
-    }
-    measurable_toFun := (measurable_subtype_coe.div_const a.val).subtype_mk
-    measurable_invFun := (measurable_subtype_coe.mul_const a.val).subtype_mk
-  }
-  -- MeasurePreserving for (· / a)
-  have h_mp : MeasurePreserving divEquiv haarMult haarMult := ⟨divEquiv.measurable, by
-    simp only [haarMult]
-    rw [Measure.map_map divEquiv.measurable measurable_expToRPos,
-        show (⇑divEquiv : RPos → RPos) ∘ expToRPos = expToRPos ∘ (· - logFromRPos a) from
-          funext (fun u => expToRPos_sub_log u a),
-        ← Measure.map_map measurable_expToRPos (measurable_sub_const _)]
-    congr 1
-    have : (· - logFromRPos a : ℝ → ℝ) = ((-logFromRPos a) + ·) := by funext x; ring
-    rw [this]
-    exact map_add_left_eq_self volume (-logFromRPos a)⟩
+  -- Use the shared division equivalence and measure preservation
+  have h_mp : MeasurePreserving (rpDivEquiv a) haarMult haarMult :=
+    measurePreserving_rpDiv a
   -- Integrability: g * star(g) is integrable by Hölder (L²×L² → L¹)
   have h_int_prod : Integrable (fun x => g x * star (g x)) haarMult :=
     hg.integrable_mul hg.star
@@ -160,9 +139,8 @@ theorem inner_dilationOp_le (a : RPos) (g : RPos -> ℂ)
     -- Step 5: Change of variables: ∫ ‖g(·/a)‖² = ∫ ‖g‖²
     _ = (∫ x, ‖g x‖ ^ 2 ∂haarMult + ∫ x, ‖g x‖ ^ 2 ∂haarMult) / 2 := by
         congr 1; congr 1
-        have h_eq : ∀ y : RPos, ⇑divEquiv y = y / a := fun _ => rfl
-        simp_rw [show ∀ x : RPos, ‖g (x / a)‖ ^ 2 = ‖g (⇑divEquiv x)‖ ^ 2 from
-          fun x => by rw [h_eq]]
+        simp_rw [show ∀ x : RPos, ‖g (x / a)‖ ^ 2 = ‖g (rpDivEquiv a x)‖ ^ 2 from
+          fun x => by simp [rpDivEquiv_apply]]
         exact h_mp.integral_comp' (fun x => ‖g x‖ ^ 2)
     -- Step 6: (T + T) / 2 = T
     _ = ∫ x, ‖g x‖ ^ 2 ∂haarMult := by ring
