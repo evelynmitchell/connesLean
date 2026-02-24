@@ -21,6 +21,7 @@ For real parts this distinction vanishes: `Re⟨g, U_a g⟩_paper = Re⟪g, U_a 
 
 import ConnesLean.Stage1.DilationOperator
 import ConnesLean.Stage1.Convolution
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 namespace ConnesLean
 
@@ -75,7 +76,29 @@ theorem convolution_add_inv (g : RPos → ℂ) (a : RPos)
 theorem convolution_at_one (g : RPos → ℂ) (hg : MemLp g 2 haarMult) :
     mulConv g (mulInvol g) 1 =
     ↑(∫⁻ x, ‖g x‖₊ ^ (2 : ℝ) ∂haarMult).toReal := by
-  sorry
+  -- Step 1: Unfold convolution at a=1
+  rw [mulConv_mulInvol_apply]
+  -- Step 2: Simplify y / 1 = y
+  simp_rw [show ∀ y : RPos, y / 1 = y from fun y => Subtype.ext (div_one y.val)]
+  -- Step 3: z * conj(z) = ‖z‖² for complex numbers
+  simp_rw [RCLike.mul_conj]
+  -- Goal: ∫ y, ↑‖g y‖ ^ 2 ∂haarMult = ↑(∫⁻ x, ↑‖g x‖₊ ^ (2:ℝ) ∂haarMult).toReal
+  -- Step 4: Normalize casts — pulls ↑ out of integral via integral_ofReal
+  norm_cast
+  -- Step 5: Strip ↑ from both sides
+  congr 1
+  -- Step 6: Convert Bochner integral to lintegral for nonneg function
+  rw [integral_eq_lintegral_of_nonneg_ae
+    (Filter.Eventually.of_forall fun x => sq_nonneg _)
+    (hg.aestronglyMeasurable.norm.aemeasurable.pow_const _).aestronglyMeasurable]
+  -- Step 7: Pointwise ENNReal conversion inside lintegral
+  congr 1
+  apply lintegral_congr
+  intro x
+  have h_two : (2 : ℝ) = ((2 : ℕ) : ℝ) := by simp
+  rw [← Real.rpow_natCast _ 2, ← h_two,
+    ← ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) zero_le_two, ofReal_norm_eq_enorm]
+  norm_cast
 
 end
 
