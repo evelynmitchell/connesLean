@@ -84,12 +84,23 @@ theorem expToRPos_logFromRPos (x : RPos) : expToRPos (logFromRPos x) = x := by
   simp [logFromRPos, expToRPos, exp_log x.property]
 
 /-- Measurability of the exponential map to `RPos`. -/
-theorem measurable_expToRPos : Measurable expToRPos := by
-  sorry
+theorem measurable_expToRPos : Measurable expToRPos :=
+  continuous_exp.measurable.subtype_mk
 
 /-- Measurability of the logarithmic map from `RPos`. -/
-theorem measurable_logFromRPos : Measurable logFromRPos := by
-  sorry
+theorem measurable_logFromRPos : Measurable logFromRPos :=
+  continuous_log'.measurable
+
+/-- The measurable equivalence between `ℝ` and `RPos` via `exp`/`log`. -/
+def expEquivRPos : ℝ ≃ᵐ RPos where
+  toEquiv := {
+    toFun := expToRPos
+    invFun := logFromRPos
+    left_inv := logFromRPos_expToRPos
+    right_inv := expToRPos_logFromRPos
+  }
+  measurable_toFun := measurable_expToRPos
+  measurable_invFun := measurable_logFromRPos
 
 /-! ## The multiplicative Haar measure -/
 
@@ -101,8 +112,8 @@ def haarMult : Measure RPos :=
 
 /-- The multiplicative Haar measure is sigma-finite, inherited from
     the sigma-finiteness of Lebesgue measure on `ℝ`. -/
-instance haarMult_sigmaFinite : SigmaFinite haarMult := by
-  sorry
+instance haarMult_sigmaFinite : SigmaFinite haarMult :=
+  expEquivRPos.sigmaFinite_map
 
 /-- Left-invariance of the Haar measure under multiplication: for any `a ∈ R_+*`
     and measurable `S ⊆ R_+*`, `μ(a · S) = μ(S)`.
@@ -110,7 +121,31 @@ instance haarMult_sigmaFinite : SigmaFinite haarMult := by
     Reference: lamportform.tex, Section 1, line 99: `d*(x/a) = d*x`. -/
 theorem haarMult_mul_invariant (a : RPos) (S : Set RPos) (hS : MeasurableSet S) :
     haarMult ((fun x => a * x) '' S) = haarMult S := by
-  sorry
+  -- Left/right inverses for multiplication by a and a⁻¹
+  have linv : Function.LeftInverse (fun x : RPos => a⁻¹ * x) (fun x => a * x) := by
+    intro x; ext; simp only [RPos.mul_val, RPos.inv_val]
+    rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt a.property), one_mul]
+  have rinv : Function.RightInverse (fun x : RPos => a⁻¹ * x) (fun x => a * x) := by
+    intro x; ext; simp only [RPos.mul_val, RPos.inv_val]
+    rw [← mul_assoc, mul_inv_cancel₀ (ne_of_gt a.property), one_mul]
+  -- Rewrite image (a * ·) '' S as preimage (a⁻¹ * ·) ⁻¹' S
+  rw [congr_fun (Set.image_eq_preimage_of_inverse linv rinv) S]
+  -- Measurability of (a⁻¹ * ·) on RPos
+  have hmeas : Measurable (fun x : RPos => a⁻¹ * x) :=
+    (measurable_const.mul measurable_subtype_coe).subtype_mk
+  -- Conjugation: (a⁻¹ * ·) ∘ exp = exp ∘ ((-log a) + ·)
+  have conj : (fun x : RPos => a⁻¹ * x) ∘ expToRPos =
+      expToRPos ∘ ((-logFromRPos a) + ·) := by
+    funext u; ext
+    simp only [Function.comp, RPos.mul_val, RPos.inv_val, expToRPos, logFromRPos]
+    rw [exp_add, exp_neg, exp_log a.property]
+  -- Main computation: unfold haarMult, apply map_apply, use conjugation + translation invariance
+  simp only [haarMult]
+  rw [Measure.map_apply measurable_expToRPos (hmeas hS),
+      Measure.map_apply measurable_expToRPos hS,
+      ← Set.preimage_comp, conj, Set.preimage_comp,
+      ← Measure.map_apply (measurable_const_add _) (measurable_expToRPos hS),
+      map_add_left_eq_self]
 
 end
 
