@@ -21,7 +21,7 @@ Key estimates:
 - (Later) integrability of the correction terms on compact `[0, 2L]` and tail `[2L, ∞)`
 -/
 
-import ConnesLean.Stage2.SupportDisjointness
+import ConnesLean.Stage2.LogCoordinates
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
@@ -126,9 +126,9 @@ theorem abs_exp_neg_half_sub_one_le {t : ℝ} (ht : 0 ≤ t) :
   linarith
 
 /-- The correction integrand `|2(exp(-t/2) - 1) w(t)|` is bounded by
-    `exp(t/2) / 2` on `(0, 2L]`, using `|exp(-t/2) - 1| ≤ t/2` and
+    `exp(t/2) / 2` for `t > 0`, using `|exp(-t/2) - 1| ≤ t/2` and
     `w(t) ≤ exp(t/2)/(2t)`. -/
-theorem correction_integrand_bound {t L : ℝ} (ht : 0 < t) (_htL : t ≤ 2 * L) :
+theorem correction_integrand_bound {t : ℝ} (ht : 0 < t) :
     |2 * (Real.exp (-t / 2) - 1) * archWeight t| ≤ Real.exp (t / 2) / 2 := by
   have h_abs := abs_exp_neg_half_sub_one_le (le_of_lt ht)
   have h_wt := archWeight_le_inv_two_t ht
@@ -160,8 +160,10 @@ theorem arch_tail_integrable {L : ℝ} (hL : 1 / 2 ≤ L) :
       exact le_of_lt (one_div_sinh_lt_four_exp_neg h1)
 
 /-- The correction integrand `2(exp(-t/2) - 1) w(t)` is integrable on `(0, 2L]`.
-    By `correction_integrand_bound`, the integrand is bounded by `exp(L)/2`
-    on this set, and `Ioc 0 (2L)` has finite Lebesgue measure.
+    By `correction_integrand_bound`, the integrand is bounded by `exp(t/2)/2`
+    for each `t`, and on `Ioc 0 (2L)` we have `t ≤ 2L`, so `t/2 ≤ L` and hence
+    `exp(t/2) ≤ exp(L)`. Thus the integrand is uniformly bounded by `exp(L)/2`
+    on this finite-measure set.
 
     Reference: lamportform.tex, Step 8.2. -/
 theorem arch_correction_integrable {L : ℝ} (_hL : 0 < L) :
@@ -175,7 +177,7 @@ theorem arch_correction_integrable {L : ℝ} (_hL : 0 < L) :
   · rw [ae_restrict_iff' measurableSet_Ioc]
     exact Filter.Eventually.of_forall fun t ht => by
       simp only [mem_Ioc] at ht
-      have h_bound := correction_integrand_bound ht.1 ht.2
+      have h_bound := correction_integrand_bound ht.1
       calc ‖2 * (Real.exp (-t / 2) - 1) * archWeight t‖
           = |2 * (Real.exp (-t / 2) - 1) * archWeight t| := Real.norm_eq_abs _
         _ ≤ Real.exp (t / 2) / 2 := h_bound
