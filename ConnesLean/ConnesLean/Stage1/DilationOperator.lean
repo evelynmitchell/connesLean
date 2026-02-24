@@ -19,6 +19,7 @@ See `ConnesLean.Common.Notation` for the convention on inner products.
 import ConnesLean.Stage1.MultiplicativeHaar
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Group.LIntegral
 
 namespace ConnesLean
 
@@ -72,10 +73,26 @@ theorem dilationOp_inv (a : RPos) (g : RPos -> ℂ) :
 
     Reference: lamportform.tex, line 115-116. -/
 theorem dilationOp_norm_eq (a : RPos) (g : RPos -> ℂ)
-    (hg : MemLp g 2 haarMult) :
+    (_hg : MemLp g 2 haarMult) :
     ∫⁻ x, ‖dilationOp a g x‖₊ ^ (2 : ℝ) ∂haarMult =
     ∫⁻ x, ‖g x‖₊ ^ (2 : ℝ) ∂haarMult := by
-  sorry
+  simp only [dilationOp_apply, haarMult]
+  -- Transfer both integrals from RPos to ℝ via the exp equivalence
+  -- (use `exact` not `rw` to handle the expToRPos ↔ ⇑expEquivRPos coercion)
+  have lhs_eq : ∫⁻ x, ‖g (x / a)‖₊ ^ (2 : ℝ) ∂Measure.map expToRPos volume =
+      ∫⁻ u, ‖g (expToRPos u / a)‖₊ ^ (2 : ℝ) ∂volume :=
+    lintegral_map_equiv _ expEquivRPos
+  have rhs_eq : ∫⁻ x, ‖g x‖₊ ^ (2 : ℝ) ∂Measure.map expToRPos volume =
+      ∫⁻ u, ‖g (expToRPos u)‖₊ ^ (2 : ℝ) ∂volume :=
+    lintegral_map_equiv _ expEquivRPos
+  rw [lhs_eq, rhs_eq]
+  -- Conjugation: expToRPos u / a = expToRPos (u - log a)
+  simp_rw [expToRPos_sub_log]
+  -- Rewrite subtraction as negative addition for translation invariance
+  simp_rw [sub_eq_add_neg, add_comm _ (-logFromRPos a)]
+  -- Apply Lebesgue translation invariance: ∫⁻ f(c + x) dx = ∫⁻ f(x) dx
+  exact lintegral_add_left_eq_self (μ := (volume : Measure ℝ))
+    (fun v => ↑‖g (expToRPos v)‖₊ ^ (2 : ℝ)) (-logFromRPos a)
 
 /-- The Cauchy-Schwarz bound: |<g, U_a g>| <= ||g||_2^2.
 
