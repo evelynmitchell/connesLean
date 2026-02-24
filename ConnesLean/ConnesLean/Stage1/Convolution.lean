@@ -16,6 +16,7 @@ See `ConnesLean.Common.Notation` for the convention on inner products.
 import ConnesLean.Stage1.MultiplicativeHaar
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Function.L1Space.Integrable
 
 namespace ConnesLean
 
@@ -70,13 +71,31 @@ theorem mulConv_mulInvol_apply (g : RPos -> ℂ) (a : RPos) :
     ext; simp [RPos.div_val, RPos.inv_val, inv_div]
   rw [h]
 
-/-- The integrand of `mulConv g (mulInvol g)` is integrable for `g in L^2(d*x)`.
-    First-pass: sorry. Follows from Cauchy-Schwarz applied to
-    `y -> g(y)` and `y -> conj(g(y/a))`, both in `L^2(d*x)`. -/
-theorem mulConv_mulInvol_integrable (g : RPos -> ℂ)
+/-- The integrand of `mulConv g (mulInvol g)` is integrable for `g ∈ L²(d*x)`.
+    Follows from Hölder's inequality applied to `g` and `star(g ∘ (· / a))`,
+    both in `L²(d*x)`, using measure-preservation of `(· / a)`. -/
+theorem mulConv_mulInvol_integrable (g : RPos → ℂ)
     (hg : MemLp g 2 haarMult) (a : RPos) :
     Integrable (fun y => g y * starRingEnd ℂ (g (y / a))) haarMult := by
-  sorry
+  -- Step 1: Division by `a` is measure-preserving on (RPos, haarMult)
+  have h_div_meas : Measurable (· / a : RPos → RPos) :=
+    (measurable_subtype_coe.div_const a.val).subtype_mk
+  have h_mp : MeasurePreserving (· / a) haarMult haarMult := ⟨h_div_meas, by
+    simp only [haarMult]
+    rw [Measure.map_map h_div_meas measurable_expToRPos,
+        show (· / a : RPos → RPos) ∘ expToRPos = expToRPos ∘ (· - logFromRPos a) from
+          funext (fun u => expToRPos_sub_log u a),
+        ← Measure.map_map measurable_expToRPos (measurable_sub_const _)]
+    congr 1
+    have : (· - logFromRPos a : ℝ → ℝ) = ((-logFromRPos a) + ·) := by
+      funext x; ring
+    rw [this]
+    exact map_add_left_eq_self volume (-logFromRPos a)⟩
+  -- Step 2: g ∘ (· / a) ∈ L², hence star(g ∘ (· / a)) ∈ L²
+  have h_conj : MemLp (star (g ∘ (· / a))) 2 haarMult :=
+    (hg.comp_measurePreserving h_mp).star
+  -- Step 3: Hölder (L² × L² → L¹)
+  exact hg.integrable_mul h_conj
 
 end
 
