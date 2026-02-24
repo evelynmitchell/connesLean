@@ -27,6 +27,7 @@ import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 namespace ConnesLean
 
@@ -138,6 +139,36 @@ theorem correction_integrand_bound {t L : ℝ} (ht : 0 < t) (_htL : t ≤ 2 * L)
         mul_le_mul (mul_le_mul_of_nonneg_left h_abs (by norm_num))
           h_wt h_wt_pos (by positivity)
     _ = Real.exp (t / 2) / 2 := by field_simp
+
+/-! ## Integrability estimates -/
+
+/-- The tail integrand `1/sinh t` is integrable on `(2L, ∞)` for `L ≥ 1/2`.
+    By comparison with `4 exp(-t)` (from `one_div_sinh_lt_four_exp_neg`)
+    which is integrable on `(2L, ∞)` (from `integrableOn_exp_neg_Ioi`).
+
+    Reference: lamportform.tex, Step 7.2. -/
+theorem arch_tail_integrable {L : ℝ} (hL : 1 / 2 ≤ L) :
+    IntegrableOn (fun t => 1 / Real.sinh t) (Ioi (2 * L)) volume := by
+  sorry
+
+/-- The correction integrand `2(exp(-t/2) - 1) w(t)` is integrable on `(0, 2L]`.
+    By `correction_integrand_bound`, the integrand is bounded by `exp(L)/2`
+    on this set, and `Ioc 0 (2L)` has finite Lebesgue measure.
+
+    Reference: lamportform.tex, Step 8.2. -/
+theorem arch_correction_integrable {L : ℝ} (hL : 0 < L) :
+    IntegrableOn (fun t => 2 * (Real.exp (-t / 2) - 1) * archWeight t)
+      (Ioc 0 (2 * L)) volume := by
+  sorry
+
+/-- The map `t ↦ ‖G̃ - S_t G̃‖²` is measurable as a function of `t`.
+    This is a prerequisite for the outer integral in the energy decomposition
+    to type-check. Follows from measurability of `translationOp` in `t` and
+    measurability of the Lebesgue integral. -/
+theorem measurable_archEnergyIntegrand {G : ℝ → ℂ} (hG : Measurable G) (L : ℝ) :
+    Measurable (fun t => ∫⁻ u, ‖zeroExtend G (logInterval L) u -
+      translationOp t (zeroExtend G (logInterval L)) u‖₊ ^ (2 : ℝ) ∂volume) := by
+  sorry
 
 /-! ## Archimedean energy integrand -/
 
