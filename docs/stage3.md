@@ -7,16 +7,24 @@ translation-difference energies, covering Section 4 of `lamportform.tex` (lines 
 This stage was implemented across 8 PRs within the `Stage2/` directory, since the plan
 and file structure were established before the stage numbering was finalized.
 
-**Status:** Complete (Issue #3 closed 2026-02-25). **0 sorries.**
+**Status:** Core energy-form infrastructure complete (Issue #3 closed 2026-02-25). **0 sorries.**
+The assembly theorems `lem:prime-energy` and `lem:arch-energy` are specified but
+intentionally deferred (see "Deferred work").
 
 ## Scope
 
-- **Lemma 3** (prime energy, `lem:prime-energy`): Express −W_p(f) as a sum of
-  ‖G̃ − S_{m log p} G̃‖² terms plus c_p(λ)‖G‖²
-- **Lemma 4** (archimedean energy, `lem:arch-energy`): Express −W_R(f) as
-  ∫₀^{2L} w(t) ‖G̃ − S_t G̃‖² dt + c_∞(λ)‖G‖²
-- **Definition 5** (`def:E`): The difference-energy form E_λ(G) combining archimedean
-  integral and prime sums
+- **Lemma 3** (prime energy, `lem:prime-energy` — specification only): Target
+  decomposition expressing −W_p(f) as a sum of ‖G̃ − S_{m log p} G̃‖² terms plus
+  c_p(λ)‖G‖². The Lean development formalizes the translation-difference energy terms
+  and constants on the right-hand side; the full equivalence with −W_p(f) is deferred.
+- **Lemma 4** (archimedean energy, `lem:arch-energy` — specification only): Target
+  decomposition expressing −W_R(f) as ∫₀^{2L} w(t) ‖G̃ − S_t G̃‖² dt + c_∞(λ)‖G‖².
+  The Lean development formalizes the energy-form side and constants; the assembly
+  theorem relating this to −W_R(f) is deferred.
+- **Definition 5** (`def:E` — fully formalized): The difference-energy form E_λ(G)
+  combining the archimedean integral and prime sums, implemented in `EnergyForm.lean`
+  together with its basic properties (nonnegativity, zero-at-zero, and assembly
+  from the prime and archimedean contributions).
 
 ## Files
 
@@ -27,10 +35,10 @@ All files live under `ConnesLean/ConnesLean/Stage2/`:
 | `TranslationOperator.lean` | S_t on L²(ℝ), dilation↔translation correspondence | #30 |
 | `LogCoordinates.lean` | L² isometry exp/log, zero-extension, interval I | #31 |
 | `SupportDisjointness.lean` | Disjoint support → orthogonality, Remark 2 truncation | #32 |
-| `PrimeDistribution.lean` | W_p(f) definition and prime energy constants | #33 |
+| `PrimeDistribution.lean` | Prime bounds/finsets, primeConstant, prime energy terms | #33 |
 | `ArchimedeanWeight.lean` | w(t) = e^{t/2}/(2 sinh t), pointwise bounds, integrability | #34 |
 | `ArchimedeanDistribution.lean` | W_R(f) definition, archimedean energy constants | #35 |
-| `EnergyForm.lean` | E_λ(G) definition, assembly from prime + archimedean, nonnegativity | #36 |
+| `EnergyForm.lean` | E_λ(G) and totalCorrection definitions, sum of energy pieces, basic lemmas | #36 |
 
 The `rpDivEquiv` refactor (PR #28) was a prerequisite extraction from Stage 1.
 
