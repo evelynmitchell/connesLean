@@ -7,16 +7,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Reference: lamportform.tex, Section 2, equation (3).
 
 The archimedean distribution is:
-  `W_R(f) = (log 4π + γ) f(1) + ∫₀^∞ (f(e^t) + f(e^{-t}) - 2 e^{-t/2} f(1)) w(t) dt`
+  `W_R(f) = (log 4π + γ) f(1) + ∫_{(0,∞)} (f(e^t) + f(e^{-t}) - 2 e^{-t/2} f(1)) w(t) dt`
 where `w(t) = exp(t/2) / (2 sinh t)` is the archimedean weight.
 
 In additive (log) coordinates with `x = e^t`, this becomes:
-  `W_R(f) = (log 4π + γ) f(1) + ∫₀^∞ (f(expToRPos t) + f(expToRPos(-t))
+  `W_R(f) = (log 4π + γ) f(1) + ∫_{(0,∞)} (f(expToRPos t) + f(expToRPos(-t))
                                          - 2 exp(-t/2) f(1)) w(t) dt`
 -/
 
 import ConnesLean.Stage2.ArchimedeanWeight
-import ConnesLean.Stage1.ConvolutionInnerProduct
 
 namespace ConnesLean
 
@@ -37,7 +36,7 @@ theorem expToRPos_neg (t : ℝ) : expToRPos (-t) = (expToRPos t)⁻¹ := by
 /-- The archimedean distribution `W_R(f)` from equation (3) of lamportform.tex.
 
     For `f : RPos → ℂ`, this is:
-      `W_R(f) = (log 4π + γ) f(1) + ∫₀^∞ (f(e^t) + f(e^{-t}) - 2 e^{-t/2} f(1)) w(t) dt`
+      `W_R(f) = (log 4π + γ) f(1) + ∫_{(0,∞)} (f(e^t) + f(e^{-t}) - 2 e^{-t/2} f(1)) w(t) dt`
 
     The Bochner integral returns 0 for non-integrable integrands, so this definition
     is total. It is meaningful when `f` has compact support in `RPos`.
@@ -56,7 +55,7 @@ theorem archDistribution_zero : archDistribution 0 = 0 := by
   simp [archDistribution]
 
 /-- The archimedean distribution at a constant function `f(x) = c` equals
-    `(log 4π + γ) c + ∫₀^∞ (2 - 2 exp(-t/2)) w(t) dt · c`.
+    `(log 4π + γ) c + ∫_{(0,∞)} (2 - 2 exp(-t/2)) w(t) dt · c`.
     In particular the singular part `(log 4π + γ) c` is explicitly visible. -/
 theorem archDistribution_const (c : ℂ) :
     archDistribution (fun _ => c) =
