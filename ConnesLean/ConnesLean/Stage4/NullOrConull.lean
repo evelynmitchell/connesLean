@@ -34,7 +34,7 @@ noncomputable section
     If `P` holds ae w.r.t. a nonzero measure, then `P` holds. -/
 private theorem of_ae_of_ne_zero {μ : Measure ℝ} {Q : Prop}
     (h_ae : ∀ᵐ _ ∂μ, Q) (h_ne : μ ≠ 0) : Q := by
-  have : NeBot (ae μ) := ae_neBot.mpr h_ne
+  haveI : NeBot (ae μ) := ae_neBot.mpr h_ne
   exact h_ae.exists.choose_spec
 
 /-- A nonzero-measure set has nonzero restricted measure. -/
@@ -162,7 +162,7 @@ theorem indicator_null_or_conull_on_compact
     rw [show f x = 0 from Set.indicator_of_notMem hx_mem.2 1] at hx
     exact hx hx_mem.1
   -- g → 1 and g → 0 in a Hausdorff space with NeBot filter: contradiction
-  have : NeBot (nhdsWithin (0 : ℝ) (Ioi 0)) := nhdsGT_neBot 0
+  haveI : NeBot (nhdsWithin (0 : ℝ) (Ioi 0)) := nhdsGT_neBot 0
   exact absurd (tendsto_nhds_unique h_tendsto_1 h_tendsto_0) one_ne_zero
 
 /-! ## Main theorem -/
@@ -248,9 +248,7 @@ theorem null_or_conull_of_translation_invariant
         (by linarith [show (0:ℝ) < 1/(↑m+2) from by positivity]) hm
         with h | h
       · exact h
-      · exact absurd h_null (ne_of_gt (h_vol_absurd h_null
-          (le_antisymm (le_trans (measure_mono (diff_subset_diff_left h_sub))
-            (by rw [h])) (zero_le _)) |>.elim))
+      · exact (h_vol_absurd h_null (measure_mono_null (diff_subset_diff_left h_sub) h)).elim
     -- vol(B ∩ K_{N₀}) = 0
     have h_N₀_null : volume (B ∩ K N₀) = 0 := by
       by_cases hK_degen : β - 1 / (↑N₀ + 2) ≤ α + 1 / (↑N₀ + 2)
