@@ -84,10 +84,6 @@ theorem totalCorrection_prime_nonpos {cutoffLambda : ℝ} (hLam : 1 < cutoffLamb
 theorem zeroExtend_zero (I : Set ℝ) : zeroExtend 0 I = 0 := by
   ext u; simp [zeroExtend, Set.indicator_zero']
 
-/-- Translating the zero function gives the zero function. -/
-theorem translationOp_apply_zero_fun (t : ℝ) : translationOp t (0 : ℝ → ℂ) = 0 := by
-  ext u; simp [translationOp_apply]
-
 /-- The energy form of the zero function is zero: `E_λ(0) = 0`. -/
 theorem energyForm_zero (cutoffLambda : ℝ) :
     energyForm cutoffLambda 0 = 0 := by
