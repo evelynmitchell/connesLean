@@ -4,3 +4,9 @@ import ConnesLean.Stage1.DilationOperator
 import ConnesLean.Stage1.Convolution
 import ConnesLean.Stage1.ConvolutionInnerProduct
 import ConnesLean.Stage1.UnitaryIdentity
+import ConnesLean.Stage2.TranslationOperator
+import ConnesLean.Stage2.LogCoordinates
+import ConnesLean.Stage2.SupportDisjointness
+import ConnesLean.Stage2.PrimeDistribution
+import ConnesLean.Stage2.ArchimedeanWeight
+import ConnesLean.Stage2.ArchimedeanDistribution
