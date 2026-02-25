@@ -10,3 +10,4 @@ import ConnesLean.Stage2.SupportDisjointness
 import ConnesLean.Stage2.PrimeDistribution
 import ConnesLean.Stage2.ArchimedeanWeight
 import ConnesLean.Stage2.ArchimedeanDistribution
+import ConnesLean.Stage2.EnergyForm
