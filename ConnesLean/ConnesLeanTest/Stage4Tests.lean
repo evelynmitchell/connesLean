@@ -75,4 +75,62 @@ example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (a b : ℝ) :
     ‖(↑(Φ a) : ℂ) - ↑(Φ b)‖₊ ≤ ‖(↑a : ℂ) - ↑b‖₊ :=
   nnnorm_comp_le hΦ a b
 
+/-! ## Markov property tests -/
+
+/-- Squared nnnorm decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (a b : ℝ) :
+    (‖(↑(Φ a) : ℂ) - ↑(Φ b)‖₊ : NNReal) ^ (2 : ℝ) ≤
+    (‖(↑a : ℂ) - ↑b‖₊) ^ (2 : ℝ) :=
+  nnnorm_sq_comp_le hΦ a b
+
+/-- Pointwise nnnorm bound for zeroExtend + translationOp. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (I : Set ℝ) (t u : ℝ) :
+    ‖zeroExtend (liftReal (Φ ∘ G)) I u -
+      translationOp t (zeroExtend (liftReal (Φ ∘ G)) I) u‖₊ ≤
+    ‖zeroExtend (liftReal G) I u -
+      translationOp t (zeroExtend (liftReal G) I) u‖₊ :=
+  nnnorm_zeroExtend_comp_le hΦ G I t u
+
+/-- Integral of nnnorm² decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (I : Set ℝ) (t : ℝ) :
+    ∫⁻ u, ‖zeroExtend (liftReal (Φ ∘ G)) I u -
+           translationOp t (zeroExtend (liftReal (Φ ∘ G)) I) u‖₊ ^ (2 : ℝ) ≤
+    ∫⁻ u, ‖zeroExtend (liftReal G) I u -
+           translationOp t (zeroExtend (liftReal G) I) u‖₊ ^ (2 : ℝ) :=
+  lintegral_nnnorm_sq_comp_le hΦ G I t
+
+set_option maxHeartbeats 800000 in
+-- ENNReal gcongr unification is expensive
+/-- Archimedean energy integrand decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L t : ℝ) :
+    archEnergyIntegrand (liftReal (Φ ∘ G)) L t ≤ archEnergyIntegrand (liftReal G) L t :=
+  archEnergyIntegrand_comp_le hΦ G L t
+
+/-- Archimedean energy integral decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L : ℝ) :
+    archEnergyIntegral (liftReal (Φ ∘ G)) L ≤ archEnergyIntegral (liftReal G) L :=
+  archEnergyIntegral_comp_le hΦ G L
+
+/-- Each prime energy term decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L : ℝ) (p m : ℕ) :
+    primeEnergyTerm p m (liftReal (Φ ∘ G)) L ≤ primeEnergyTerm p m (liftReal G) L :=
+  primeEnergyTerm_comp_le hΦ G L p m
+
+/-- Total prime energy decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L : ℝ) (p : ℕ) (cutoffLambda : ℝ) :
+    totalPrimeEnergy p cutoffLambda (liftReal (Φ ∘ G)) L ≤
+    totalPrimeEnergy p cutoffLambda (liftReal G) L :=
+  totalPrimeEnergy_comp_le hΦ G L p cutoffLambda
+
+/-- Main Markov property: energy form decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (cutoffLambda : ℝ) :
+    energyForm cutoffLambda (liftReal (Φ ∘ G)) ≤ energyForm cutoffLambda (liftReal G) :=
+  energyForm_comp_normalContraction_le hΦ G cutoffLambda
+
+/-- Corollary: energy of |G| ≤ energy of G. -/
+example (G : ℝ → ℝ) (cutoffLambda : ℝ) :
+    energyForm cutoffLambda (liftReal (fun u => |G u|)) ≤
+    energyForm cutoffLambda (liftReal G) :=
+  energyForm_abs_le G cutoffLambda
+
 end

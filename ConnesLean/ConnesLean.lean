@@ -12,3 +12,4 @@ import ConnesLean.Stage2.ArchimedeanWeight
 import ConnesLean.Stage2.ArchimedeanDistribution
 import ConnesLean.Stage2.EnergyForm
 import ConnesLean.Stage4.NormalContraction
+import ConnesLean.Stage4.MarkovProperty
