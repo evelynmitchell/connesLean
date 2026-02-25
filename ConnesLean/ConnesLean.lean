@@ -14,3 +14,4 @@ import ConnesLean.Stage2.EnergyForm
 import ConnesLean.Stage4.NormalContraction
 import ConnesLean.Stage4.MarkovProperty
 import ConnesLean.Stage4.TranslationInvariance
+import ConnesLean.Stage4.MollificationConstancy

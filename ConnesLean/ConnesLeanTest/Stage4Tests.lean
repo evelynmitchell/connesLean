@@ -163,4 +163,58 @@ example (B I : Set ℝ) (ε : ℝ) (h : IndicatorTranslationInvariant B I ε)
         B.indicator (1 : ℝ → ℝ) u = B.indicator (1 : ℝ → ℝ) (u - t) :=
   indicator_ae_shift_forall_small h hI hαa hbβ
 
+/-! ## Mollification and constancy tests -/
+
+/-- localAverage applies correctly. -/
+example (f : ℝ → ℝ) (η u : ℝ) :
+    localAverage f η u = (2 * η)⁻¹ * ∫ s in (u - η)..(u + η), f s :=
+  localAverage_apply f η u
+
+/-- Forward shift of ae property. -/
+example (f : ℝ → ℝ) (a b t : ℝ)
+    (h : ∀ᵐ u ∂(MeasureTheory.volume.restrict (Set.Icc a b)), f u = f (u - t)) :
+    ∀ᵐ x ∂(MeasureTheory.volume : MeasureTheory.Measure ℝ),
+      x ∈ Set.Icc (a - t) (b - t) → f (x + t) = f x :=
+  ae_indicator_forward_shift h
+
+/-- Local average shift-invariance under ae shift hypothesis. -/
+example (f : ℝ → ℝ) (a b t η u : ℝ)
+    (hη : 0 < η) (ht : 0 < t)
+    (h_ae : ∀ᵐ u ∂(MeasureTheory.volume.restrict (Set.Icc a b)), f u = f (u - t))
+    (h_contain : Set.Icc (u - η) (u + η + t) ⊆ Set.Icc a b) :
+    localAverage f η (u + t) = localAverage f η u :=
+  localAverage_shift_eq hη ht h_ae h_contain
+
+/-- Local average constancy via telescoping. -/
+example (f : ℝ → ℝ) (a b η δ : ℝ) (hδ : 0 < δ)
+    (h_shift : ∀ u t, a ≤ u - η → u + η + t ≤ b → 0 < t → t < δ →
+      localAverage f η (u + t) = localAverage f η u) :
+    ∀ v, a + η ≤ v → v ≤ b - η →
+      localAverage f η v = localAverage f η (a + η) :=
+  localAverage_const_on_compact hδ h_shift
+
+/-- Local average of indicator is constant under translation invariance. -/
+example (B I : Set ℝ) (ε : ℝ) (h : IndicatorTranslationInvariant B I ε)
+    (α β a b : ℝ) (hI : I = Set.Ioo α β) (hαa : α < a) (hbβ : b < β)
+    (η : ℝ) (hη : 0 < η) :
+    ∀ v, a + η ≤ v → v ≤ b - η →
+      localAverage (B.indicator (1 : ℝ → ℝ)) η v =
+      localAverage (B.indicator (1 : ℝ → ℝ)) η (a + η) :=
+  localAverage_const_of_indicator_invariant h hI hαa hbβ hη
+
+/-- Closed ball average equals local average. -/
+example (f : ℝ → ℝ) (x r : ℝ) (hr : 0 < r) :
+    MeasureTheory.average (MeasureTheory.volume.restrict (Metric.closedBall x r)) f =
+    localAverage f r x :=
+  closedBall_average_eq_localAverage f x r hr
+
+set_option maxHeartbeats 400000 in
+-- IsUnifLocDoublingMeasure instance search is expensive
+/-- Lebesgue differentiation: local average converges ae. -/
+example (f : ℝ → ℝ) (hf : MeasureTheory.LocallyIntegrable f MeasureTheory.volume) :
+    ∀ᵐ x ∂MeasureTheory.volume,
+      Filter.Tendsto (fun η => localAverage f η x)
+        (nhdsWithin 0 (Set.Ioi 0)) (nhds (f x)) :=
+  localAverage_tendsto_ae f hf
+
 end
