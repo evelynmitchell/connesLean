@@ -191,6 +191,23 @@ theorem null_or_conull_of_translation_invariant
   have hc₀d₀ : c₀ < d₀ := by simp only [c₀, d₀]; linarith
   have h_vol_pos : 0 < volume (Icc c₀ d₀) := by
     rw [Real.volume_Icc]; simp; linarith [hc₀d₀]
+  -- Helper: if both B ∩ [c₀, d₀] and [c₀, d₀] \ B are null, volume [c₀, d₀] = 0, contradiction
+  have h_vol_absurd : ∀ (h1 : volume (B ∩ Icc c₀ d₀) = 0)
+      (h2 : volume (Icc c₀ d₀ \ B) = 0), False := by
+    intro h1 h2
+    exact absurd (le_antisymm (le_trans (measure_mono (show Icc c₀ d₀ ⊆
+      B ∩ Icc c₀ d₀ ∪ (Icc c₀ d₀ \ B) from by
+        intro x hx; by_cases hxB : x ∈ B
+        · exact Or.inl ⟨hxB, hx⟩
+        · exact Or.inr ⟨hx, hxB⟩))
+      (le_trans (measure_union_le _ _) (by rw [h1, h2, zero_add])))
+      (zero_le _)) (ne_of_gt h_vol_pos)
+  -- Helper: 1/(N+2) ≤ (β-α)/3 when 3/(β-α) < N
+  have h_inv_le : ∀ N : ℕ, 3 / (β - α) < ↑N → 1 / (↑N + 2) ≤ (β - α) / 3 := by
+    intro N hN
+    rw [div_le_div_iff₀ (by positivity : (0 : ℝ) < ↑N + 2) (by norm_num : (0:ℝ) < 3)]
+    have : 3 < (β - α) * ↑N := by rwa [div_lt_iff₀' (by linarith : 0 < β - α)] at hN
+    nlinarith [show 0 < β - α from by linarith]
   -- Apply compact lemma to anchor
   rcases indicator_null_or_conull_on_compact h hI hαc₀ hd₀β hc₀d₀
     with h_null | h_conull
@@ -210,29 +227,12 @@ theorem null_or_conull_of_translation_invariant
       le_antisymm (le_trans (measure_mono hB_sub)
         (le_trans (measure_iUnion_le _) (by simp [h_each]))) (zero_le _)
     intro n
-    -- Helper: 1/(N+2) ≤ (β-α)/3 when 3/(β-α) < N
-    have h_inv_le : ∀ N : ℕ, 3 / (β - α) < ↑N → 1 / (↑N + 2) ≤ (β - α) / 3 := by
-      intro N hN
-      rw [div_le_div_iff₀ (by positivity : (0 : ℝ) < ↑N + 2) (by norm_num : (0:ℝ) < 3)]
-      have : 3 < (β - α) * ↑N := by rwa [div_lt_iff₀' (by linarith : 0 < β - α)] at hN
-      nlinarith [show 0 < β - α from by linarith]
     -- Helper: K_n monotonicity (n ≤ m → K n ⊆ K m)
     have hK_mono : ∀ n m : ℕ, n ≤ m → K n ⊆ K m := by
       intro n m hnm
       apply Icc_subset_Icc
       · gcongr
       · gcongr
-    -- Helper: volume contradiction
-    have h_vol_absurd : ∀ (h1 : volume (B ∩ Icc c₀ d₀) = 0)
-        (h2 : volume (Icc c₀ d₀ \ B) = 0), False := by
-      intro h1 h2
-      exact absurd (le_antisymm (le_trans (measure_mono (show Icc c₀ d₀ ⊆
-        B ∩ Icc c₀ d₀ ∪ (Icc c₀ d₀ \ B) from by
-          intro x hx; by_cases hxB : x ∈ B
-          · exact Or.inl ⟨hxB, hx⟩
-          · exact Or.inr ⟨hx, hxB⟩))
-        (le_trans (measure_union_le _ _) (by rw [h1, h2, zero_add])))
-        (zero_le _)) (ne_of_gt h_vol_pos)
     -- Find N₀ such that [c₀, d₀] ⊆ K_{N₀}
     obtain ⟨N₀, hN₀⟩ := exists_nat_gt (3 / (β - α))
     have h_anchor_sub : Icc c₀ d₀ ⊆ K N₀ := by
@@ -281,80 +281,39 @@ theorem null_or_conull_of_translation_invariant
         (le_trans (measure_iUnion_le _) (by simp [h_each]))) (zero_le _)
     intro n
     obtain ⟨N₀, hN₀⟩ := exists_nat_gt (3 / (β - α))
-    have hN₀_pos : (0 : ℝ) < ↑N₀ + 2 := by positivity
     have h_anchor_sub : Icc c₀ d₀ ⊆ K N₀ := by
       apply Icc_subset_Icc
-      · simp only [c₀]
-        have : 1 / (↑N₀ + 2) ≤ (β - α) / 3 := by
-          rw [div_le_div_iff₀ hN₀_pos (by norm_num : (0 : ℝ) < 3)]
-          have : 3 < (β - α) * ↑N₀ := by
-            rwa [div_lt_iff₀' (by linarith : 0 < β - α)] at hN₀
-          nlinarith [show 0 < β - α from by linarith]
-        linarith
-      · simp only [d₀]
-        have : 1 / (↑N₀ + 2) ≤ (β - α) / 3 := by
-          rw [div_le_div_iff₀ hN₀_pos (by norm_num : (0 : ℝ) < 3)]
-          have : 3 < (β - α) * ↑N₀ := by
-            rwa [div_lt_iff₀' (by linarith : 0 < β - α)] at hN₀
-          nlinarith [show 0 < β - α from by linarith]
-        linarith
+      · simp only [c₀]; linarith [h_inv_le N₀ hN₀]
+      · simp only [d₀]; linarith [h_inv_le N₀ hN₀]
+    -- Helper: apply compact lemma and use h_vol_absurd when null branch contradicts
+    have hK_apply_conull : ∀ m : ℕ, Icc c₀ d₀ ⊆ K m →
+        α + 1/(↑m+2) < β - 1/(↑m+2) → volume (K m \ B) = 0 := by
+      intro m h_sub hm
+      rcases indicator_null_or_conull_on_compact h hI
+        (by linarith [show (0:ℝ) < 1/(↑m+2) from by positivity])
+        (by linarith [show (0:ℝ) < 1/(↑m+2) from by positivity]) hm
+        with h | h
+      · exact (h_vol_absurd (measure_mono_null (inter_subset_inter_right B h_sub) h)
+            h_conull).elim
+      · exact h
     have h_N₀_conull : volume (K N₀ \ B) = 0 := by
-      have hαK : α < α + 1 / (↑N₀ + 2) := by
-        linarith [show (0:ℝ) < 1/(↑N₀+2) from by positivity]
-      have hKβ : β - 1 / (↑N₀ + 2) < β := by
-        linarith [show (0:ℝ) < 1/(↑N₀+2) from by positivity]
       by_cases hK_degen : β - 1 / (↑N₀ + 2) ≤ α + 1 / (↑N₀ + 2)
-      · have : volume (K N₀) = 0 := by
-          simp only [K, Real.volume_Icc, ENNReal.ofReal_eq_zero]; linarith
-        exact le_antisymm (le_trans (measure_mono diff_subset) (by rw [this]))
-          (zero_le _)
+      · exact measure_mono_null diff_subset
+          (by simp only [K, Real.volume_Icc]; exact ENNReal.ofReal_of_nonpos (by linarith))
       · push_neg at hK_degen
-        rcases indicator_null_or_conull_on_compact h hI hαK hKβ hK_degen
-          with h | h
-        · exfalso
-          have : volume (B ∩ Icc c₀ d₀) = 0 :=
-            measure_mono_null (inter_subset_inter_right B h_anchor_sub) h
-          have : volume (Icc c₀ d₀) = 0 :=
-            le_antisymm (le_trans (measure_mono (show Icc c₀ d₀ ⊆
-              B ∩ Icc c₀ d₀ ∪ (Icc c₀ d₀ \ B) from by
-                intro x hx; by_cases hxB : x ∈ B
-                · exact Or.inl ⟨hxB, hx⟩
-                · exact Or.inr ⟨hx, hxB⟩))
-              (le_trans (measure_union_le _ _) (by rw [this, h_conull, zero_add])))
-              (zero_le _)
-          exact absurd this (ne_of_gt h_vol_pos)
-        · exact h
+        exact hK_apply_conull N₀ h_anchor_sub hK_degen
     by_cases hn_le : n ≤ N₀
     · have h_sub : K n ⊆ K N₀ := by
         apply Icc_subset_Icc <;> gcongr
       exact measure_mono_null (diff_subset_diff_left h_sub) h_N₀_conull
     · push_neg at hn_le
-      have h_sub : K N₀ ⊆ K n := by
-        apply Icc_subset_Icc <;> gcongr
-      have hαK : α < α + 1 / (↑n + 2) := by
-        linarith [show (0:ℝ) < 1/(↑n+2) from by positivity]
-      have hKβ : β - 1 / (↑n + 2) < β := by
-        linarith [show (0:ℝ) < 1/(↑n+2) from by positivity]
       by_cases hK_degen : β - 1 / (↑n + 2) ≤ α + 1 / (↑n + 2)
       · exact measure_mono_null diff_subset
           (by simp only [K, Real.volume_Icc]; exact ENNReal.ofReal_of_nonpos (by linarith))
       · push_neg at hK_degen
-        rcases indicator_null_or_conull_on_compact h hI hαK hKβ hK_degen
-          with h | h
-        · exfalso
-          have h_anchor_sub_n : Icc c₀ d₀ ⊆ K n := le_trans h_anchor_sub h_sub
-          have : volume (B ∩ Icc c₀ d₀) = 0 :=
-            measure_mono_null (inter_subset_inter_right B h_anchor_sub_n) h
-          have : volume (Icc c₀ d₀) = 0 :=
-            le_antisymm (le_trans (measure_mono (show Icc c₀ d₀ ⊆
-              B ∩ Icc c₀ d₀ ∪ (Icc c₀ d₀ \ B) from by
-                intro x hx; by_cases hxB : x ∈ B
-                · exact Or.inl ⟨hxB, hx⟩
-                · exact Or.inr ⟨hx, hxB⟩))
-              (le_trans (measure_union_le _ _) (by rw [this, h_conull, zero_add])))
-              (zero_le _)
-          exact absurd this (ne_of_gt h_vol_pos)
-        · exact h
+        have h_sub : K N₀ ⊆ K n := by
+          apply Icc_subset_Icc <;> gcongr
+        exact hK_apply_conull n (le_trans h_anchor_sub h_sub) hK_degen
 
 end
 
