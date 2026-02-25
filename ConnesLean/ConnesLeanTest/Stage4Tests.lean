@@ -104,6 +104,17 @@ example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L :
     archEnergyIntegral (liftReal (Φ ∘ G)) L ≤ archEnergyIntegral (liftReal G) L :=
   archEnergyIntegral_comp_le hΦ G L
 
+/-- Each prime energy term decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L : ℝ) (p m : ℕ) :
+    primeEnergyTerm p m (liftReal (Φ ∘ G)) L ≤ primeEnergyTerm p m (liftReal G) L :=
+  primeEnergyTerm_comp_le hΦ G L p m
+
+/-- Total prime energy decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L : ℝ) (p : ℕ) (cutoffLambda : ℝ) :
+    totalPrimeEnergy p cutoffLambda (liftReal (Φ ∘ G)) L ≤
+    totalPrimeEnergy p cutoffLambda (liftReal G) L :=
+  totalPrimeEnergy_comp_le hΦ G L p cutoffLambda
+
 /-- Main Markov property: energy form decreases under contraction. -/
 example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (cutoffLambda : ℝ) :
     energyForm cutoffLambda (liftReal (Φ ∘ G)) ≤ energyForm cutoffLambda (liftReal G) :=
