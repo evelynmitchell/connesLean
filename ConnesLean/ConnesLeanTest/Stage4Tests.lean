@@ -99,6 +99,13 @@ example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (I :
            translationOp t (zeroExtend (liftReal G) I) u‖₊ ^ (2 : ℝ) :=
   lintegral_nnnorm_sq_comp_le hΦ G I t
 
+set_option maxHeartbeats 800000 in
+-- ENNReal gcongr unification is expensive
+/-- Archimedean energy integrand decreases under contraction. -/
+example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L t : ℝ) :
+    archEnergyIntegrand (liftReal (Φ ∘ G)) L t ≤ archEnergyIntegrand (liftReal G) L t :=
+  archEnergyIntegrand_comp_le hΦ G L t
+
 /-- Archimedean energy integral decreases under contraction. -/
 example (Φ : ℝ → ℝ) (hΦ : IsNormalContraction Φ) (G : ℝ → ℝ) (L : ℝ) :
     archEnergyIntegral (liftReal (Φ ∘ G)) L ≤ archEnergyIntegral (liftReal G) L :=
