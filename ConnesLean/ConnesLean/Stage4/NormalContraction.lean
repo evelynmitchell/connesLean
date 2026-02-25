@@ -35,12 +35,10 @@ structure IsNormalContraction (Φ : ℝ → ℝ) : Prop where
 /-! ## Basic instances -/
 
 /-- The absolute value function `|·|` is a normal contraction.
-    Uses the reverse triangle inequality `||a| - |b|| ≤ |a - b|`. -/
+    Uses `lipschitzWith_one_norm` (norm is 1-Lipschitz) and `Real.norm_eq_abs`. -/
 theorem isNormalContraction_abs : IsNormalContraction (fun x => |x|) where
   map_zero := abs_zero
-  lipschitz := LipschitzWith.of_dist_le_mul fun x y => by
-    simp only [NNReal.coe_one, one_mul, Real.dist_eq]
-    exact abs_abs_sub_abs_le_abs_sub x y
+  lipschitz := by simpa [Real.norm_eq_abs] using @lipschitzWith_one_norm ℝ _
 
 /-- The identity function is a normal contraction. -/
 theorem isNormalContraction_id : IsNormalContraction id where
