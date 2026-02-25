@@ -133,4 +133,34 @@ example (G : ℝ → ℝ) (cutoffLambda : ℝ) :
     energyForm cutoffLambda (liftReal G) :=
   energyForm_abs_le G cutoffLambda
 
+/-! ## Translation invariance tests -/
+
+/-- Compact margin is positive when Icc sits strictly inside Ioo. -/
+example (α β a b : ℝ) (hαa : α < a) (hbβ : b < β) :
+    0 < compactMargin α β a b :=
+  compactMargin_pos hαa hbβ
+
+/-- Icc a b ⊆ Ioo α β ∩ preimage (·-t) (Ioo α β) for small t. -/
+example (α β a b t : ℝ) (hαa : α < a) (hbβ : b < β)
+    (ht_pos : 0 < t) (ht_bound : t < compactMargin α β a b) :
+    Set.Icc a b ⊆ Set.Ioo α β ∩ Set.preimage (· - t) (Set.Ioo α β) :=
+  icc_subset_ioo_inter_shift hαa hbβ ht_pos ht_bound
+
+/-- ae shift-invariance transfers to compact subintervals. -/
+example (B I : Set ℝ) (ε : ℝ) (h : IndicatorTranslationInvariant B I ε)
+    (α β a b : ℝ) (hI : I = Set.Ioo α β) (hαa : α < a) (hbβ : b < β)
+    (t : ℝ) (ht_pos : 0 < t) (ht_ε : t < ε) (ht_δ : t < compactMargin α β a b) :
+    ∀ᵐ u ∂(MeasureTheory.volume.restrict (Set.Icc a b)),
+      B.indicator (1 : ℝ → ℝ) u = B.indicator (1 : ℝ → ℝ) (u - t) :=
+  indicator_ae_shift_on_compact h hI hαa hbβ ht_pos ht_ε ht_δ
+
+/-- Quantified ae shift-invariance with explicit threshold. -/
+example (B I : Set ℝ) (ε : ℝ) (h : IndicatorTranslationInvariant B I ε)
+    (α β a b : ℝ) (hI : I = Set.Ioo α β) (hαa : α < a) (hbβ : b < β) :
+    let δ := min ε (compactMargin α β a b)
+    0 < δ ∧ ∀ t, 0 < t → t < δ →
+      ∀ᵐ u ∂(MeasureTheory.volume.restrict (Set.Icc a b)),
+        B.indicator (1 : ℝ → ℝ) u = B.indicator (1 : ℝ → ℝ) (u - t) :=
+  indicator_ae_shift_forall_small h hI hαa hbβ
+
 end
