@@ -217,4 +217,23 @@ example (f : ℝ → ℝ) (hf : MeasureTheory.LocallyIntegrable f MeasureTheory.
         (nhdsWithin 0 (Set.Ioi 0)) (nhds (f x)) :=
   localAverage_tendsto_ae f hf
 
+/-! ## Null or conull tests -/
+
+/-- Ioo is covered by increasing Icc subintervals. -/
+example {α β : ℝ} :
+    Set.Ioo α β ⊆ ⋃ n : ℕ, Set.Icc (α + 1 / (↑n + 2)) (β - 1 / (↑n + 2)) :=
+  ioo_subset_iUnion_icc
+
+/-- Compact null-or-conull: on any compact [c,d] ⊂ (α,β), indicator is null or conull. -/
+example (B I : Set ℝ) (ε : ℝ) (h : IndicatorTranslationInvariant B I ε)
+    (α β c d : ℝ) (hI : I = Set.Ioo α β) (hαc : α < c) (hdβ : d < β) (hcd : c < d) :
+    MeasureTheory.volume (B ∩ Set.Icc c d) = 0 ∨
+    MeasureTheory.volume (Set.Icc c d \ B) = 0 :=
+  indicator_null_or_conull_on_compact h hI hαc hdβ hcd
+
+/-- Main theorem (Lemma 6): translation-invariant indicator is null or conull. -/
+example (B I : Set ℝ) (ε : ℝ) (h : IndicatorTranslationInvariant B I ε) :
+    MeasureTheory.volume B = 0 ∨ MeasureTheory.volume (I \ B) = 0 :=
+  null_or_conull_of_translation_invariant h
+
 end
