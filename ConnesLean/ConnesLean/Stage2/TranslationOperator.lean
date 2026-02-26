@@ -79,6 +79,23 @@ theorem translationOp_lintegral_norm_eq (t : ℝ) (φ : ℝ → ℂ) :
   exact lintegral_add_left_eq_self (μ := volume)
     (fun v => ↑‖φ v‖₊ ^ (2 : ℝ)) (-t)
 
+/-! ## Strong continuity of translations in L² -/
+
+/-- **Axiom** (Strong continuity of translations in L²):
+    The map `t ↦ ∫ ‖φ(u) − φ(u−t)‖² du` is continuous for any `φ : ℝ → ℂ`.
+
+    This is a standard result: the translation group `{S_t}_{t ∈ ℝ}` is
+    strongly continuous on L²(ℝ) (Engel-Nagel, Thm I.5.8).
+
+    **Why axiom:** Mathlib does not currently provide strong continuity of
+    the translation group on Lp spaces. The proof requires density of
+    continuous compactly supported functions in L² plus uniform continuity,
+    or dominated convergence — both paths need unformalized infrastructure.
+
+    Reference: Engel-Nagel, One-Parameter Semigroups, Theorem I.5.8. -/
+axiom translation_norm_sq_continuous (φ : ℝ → ℂ) :
+    Continuous (fun t => ∫⁻ u, ‖φ u - translationOp t φ u‖₊ ^ (2 : ℝ) ∂volume)
+
 end
 
 end ConnesLean

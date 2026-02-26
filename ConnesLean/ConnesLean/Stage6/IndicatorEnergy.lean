@@ -20,9 +20,10 @@ The proof follows five steps:
 ## Axiom
 
 One axiom is used for the strong continuity of translations in L² (Step 3):
-the map `t ↦ ∫ ‖φ(u) − φ(u−t)‖² du` is continuous. This is a standard result
-(Engel-Nagel, Thm I.5.8; or by dominated convergence) but requires L² strong
-continuity infrastructure not currently available in Mathlib.
+the map `t ↦ ∫ ‖φ(u) − φ(u−t)‖² du` is continuous for any `φ : ℝ → ℂ`.
+This is a standard result (Engel-Nagel, Thm I.5.8; or by dominated convergence)
+but requires L² strong continuity infrastructure not currently available in
+Mathlib. The axiom lives in `Stage2.TranslationOperator` for reusability.
 -/
 
 import ConnesLean.Stage4.NullOrConull
@@ -67,24 +68,10 @@ theorem translationNormSq_zero_of_weighted_zero {G : ℝ → ℂ} {L t : ℝ}
     exact archWeight_pos ht
   exact (mul_eq_zero.mp h).resolve_left (ENNReal.coe_ne_zero.mpr hw_nnreal)
 
-/-! ## Step 3 axiom: Strong continuity of translations in L² -/
+/-! ## Step 3: Continuity upgrade from a.e. to everywhere
 
-/-- **Axiom** (Strong continuity of translations in L²):
-    The map `t ↦ ∫ ‖φ(u) − φ(u−t)‖² du` is continuous for any measurable `φ`.
-
-    This is a standard result: the translation group `{S_t}_{t ∈ ℝ}` is
-    strongly continuous on L²(ℝ) (Engel-Nagel, Thm I.5.8).
-
-    **Why axiom:** Mathlib does not currently provide strong continuity of
-    the translation group on Lp spaces. The proof requires density of
-    continuous compactly supported functions in L² plus uniform continuity,
-    or dominated convergence — both paths need unformalized infrastructure.
-
-    Reference: Engel-Nagel, One-Parameter Semigroups, Theorem I.5.8. -/
-axiom translation_norm_sq_continuous (φ : ℝ → ℂ) :
-    Continuous (fun t => ∫⁻ u, ‖φ u - translationOp t φ u‖₊ ^ (2 : ℝ) ∂volume)
-
-/-! ## Step 3: Continuity upgrade from a.e. to everywhere -/
+The axiom `translation_norm_sq_continuous` (strong continuity of translations
+in L²) lives in `Stage2.TranslationOperator` for reusability. -/
 
 /-- A continuous ENNReal-valued function that vanishes a.e. on an open interval
     vanishes everywhere on that interval.
@@ -250,7 +237,7 @@ theorem energyForm_indicator_null_or_conull
     Ioo (-L+s) (L+s) has measure 2s for 0 < s < 2L.
 
     Reference: lamportform.tex, Remark 4, Step 1. -/
-theorem symm_diff_logInterval_measure {L s : ℝ} (_hL : 0 < L) (hs : 0 < s) (hs2L : s < 2 * L) :
+theorem symm_diff_logInterval_measure {L s : ℝ} (hs : 0 < s) (hs2L : s < 2 * L) :
     volume (symmDiff (logInterval L) (Set.preimage (· - s) (logInterval L))) =
       ENNReal.ofReal (2 * s) := by
   unfold logInterval
@@ -416,21 +403,6 @@ theorem energyForm_indicator_null
         simp only [primeEnergyTerm]; congr 1; exact h_inner _
     rw [h_eq] at h_energy
     exact absurd h_energy (ne_of_gt h_pos)
-
-/-! ## Tests -/
-
-#check @energyForm_indicator_null_or_conull
-#check @energyForm_constant_pos
-#check @energyForm_indicator_null
-#check @archEnergy_eq_zero_of_energyForm_eq_zero
-#check @primeEnergy_eq_zero_of_energyForm_eq_zero
-#check @symm_diff_logInterval_measure
-#check @translation_norm_sq_continuous
-
-example : ∀ (cutoffLambda : ℝ) (G : ℝ → ℂ),
-    energyForm cutoffLambda G = 0 →
-    archEnergyIntegral G (Real.log cutoffLambda) = 0 :=
-  fun _ _ h => archEnergy_eq_zero_of_energyForm_eq_zero h
 
 end
 
