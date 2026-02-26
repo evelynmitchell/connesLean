@@ -68,10 +68,26 @@ theorem translationOp_normSq_zero_of_weighted_zero {G : ℝ → ℂ} {L t : ℝ}
     exact archWeight_pos ht
   exact (mul_eq_zero.mp h).resolve_left (ENNReal.coe_ne_zero.mpr hw_nnreal)
 
+/-! ## Measurability helper for archWeight
+
+The archWeight measurability proof is shared between `energyForm_indicator_null_or_conull`
+and `energyForm_constant_pos`. -/
+
+/-- The archimedean weight `archWeight` is measurable as an `ENNReal`-valued function. -/
+private theorem measurable_archWeight_ennreal :
+    Measurable (fun t => (archWeight t).toNNReal : ℝ → NNReal) :=
+  measurable_real_toNNReal.comp
+    ((Real.continuous_exp.measurable.comp (measurable_id.div_const 2)).div
+      (measurable_const.mul Real.measurable_sinh))
+
 /-! ## Step 3: Continuity upgrade from a.e. to everywhere
 
-The axiom `translation_norm_sq_continuous` (strong continuity of translations
-in L²) lives in `Stage2.TranslationOperator` for reusability. -/
+For any measurable `φ : ℝ → ℂ` with finite L² norm (i.e. `∫ ‖φ(u)‖² < ∞`),
+the map `t ↦ ∫ ‖φ(u) − φ(u−t)‖² du` is continuous.
+This is a standard result (Engel-Nagel, Thm I.5.8; or by dominated convergence)
+but requires L² strong continuity infrastructure not currently available in
+Mathlib. The corresponding axiom (`translation_norm_sq_continuous`) lives in
+`Stage2.TranslationOperator` for reusability. -/
 
 /-- A continuous ENNReal-valued function that vanishes a.e. on an open interval
     vanishes everywhere on that interval.
@@ -187,13 +203,9 @@ theorem energyForm_indicator_null_or_conull
   -- Step 2: weighted integrand = 0 a.e. on (0, 2L)
   -- archEnergyIntegrand is measurable (product of continuous weight and measurable integral)
   have h_integrand_meas : Measurable (archEnergyIntegrand G L) := by
-    unfold archEnergyIntegrand archWeight
-    apply Measurable.mul
-    · exact measurable_coe_nnreal_ennreal.comp
-        (measurable_real_toNNReal.comp
-          ((Real.continuous_exp.measurable.comp (measurable_id.div_const 2)).div
-            (measurable_const.mul Real.measurable_sinh)))
-    · exact measurable_archEnergyIntegrand hG_meas L
+    unfold archEnergyIntegrand
+    exact (measurable_coe_nnreal_ennreal.comp measurable_archWeight_ennreal).mul
+      (measurable_archEnergyIntegrand hG_meas L)
   have h_integrand_ae : ∀ᵐ t ∂(volume.restrict (Ioo 0 (2 * L))),
       archEnergyIntegrand G L t = 0 := by
     unfold archEnergyIntegral at h_arch
@@ -240,7 +252,7 @@ theorem energyForm_indicator_null_or_conull
     have h_ae_trans : ∀ᵐ u ∂volume, φ u = φ (u - t) := h_ae_eq
     exact indicator_ae_eq_on_overlap h_ae_trans
   -- Step 5: Apply null_or_conull_of_translation_invariant
-  exact null_or_conull_of_translation_invariant {
+  exact null_or_conull_of_translation_invariant (ε := 2 * L) {
     ε_pos := by linarith
     B_measurable := hB_meas
     B_subset := hB_sub
@@ -334,13 +346,9 @@ theorem energyForm_constant_pos {cutoffLambda : ℝ} (hLam : 1 < cutoffLambda) :
   set L := Real.log cutoffLambda
   -- Measurability of the energy integrand
   have h_integrand_meas : Measurable (archEnergyIntegrand (fun _ => (1 : ℂ)) L) := by
-    unfold archEnergyIntegrand archWeight
-    apply Measurable.mul
-    · exact measurable_coe_nnreal_ennreal.comp
-        (measurable_real_toNNReal.comp
-          ((Real.continuous_exp.measurable.comp (measurable_id.div_const 2)).div
-            (measurable_const.mul Real.measurable_sinh)))
-    · exact measurable_archEnergyIntegrand measurable_const _
+    unfold archEnergyIntegrand
+    exact (measurable_coe_nnreal_ennreal.comp measurable_archWeight_ennreal).mul
+      (measurable_archEnergyIntegrand measurable_const _)
   -- Use setLIntegral_pos_iff: integral > 0 iff support has positive measure
   unfold archEnergyIntegral
   rw [setLIntegral_pos_iff h_integrand_meas]
