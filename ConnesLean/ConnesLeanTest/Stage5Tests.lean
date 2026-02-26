@@ -132,4 +132,16 @@ example (Λ : ℝ) (M : ENNReal) (hM : M < ⊤) :
     formNormBall Λ M ⊆ formDomain Λ :=
   formNormBall_subset_formDomain Λ hM
 
+/-- Form-norm ball satisfies translation equicontinuity (axiom instantiation). -/
+example (Λ : ℝ) (h : 1 < Λ) (M : ENNReal) (hM : M < ⊤) :
+    ∀ ε : ENNReal, 0 < ε → ∃ δ : ℝ, 0 < δ ∧
+      ∀ φ ∈ formNormBall Λ M, ∀ h : ℝ,
+        |h| < δ → (∫⁻ u, ‖φ (u - h) - φ u‖₊ ^ (2 : ℝ)) < ε :=
+  formNormBall_equicontinuous Λ h M hM
+
+/-- The form-norm ball is relatively compact in L². -/
+example (Λ : ℝ) (h : 1 < Λ) (M : ENNReal) (hM : M < ⊤) :
+    IsRelativelyCompactL2 (formNormBall Λ M) :=
+  formNormBall_isRelativelyCompactL2 Λ h M hM
+
 end
