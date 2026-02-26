@@ -73,7 +73,8 @@ theorem translationOp_normSq_zero_of_weighted_zero {G : ℝ → ℂ} {L t : ℝ}
 The archWeight measurability proof is shared between `energyForm_indicator_null_or_conull`
 and `energyForm_constant_pos`. -/
 
-/-- The archimedean weight `archWeight` is measurable as an `ENNReal`-valued function. -/
+/-- The archimedean weight `archWeight` is measurable as an `NNReal`-valued function
+    (via `Real.toNNReal`). Coerced to `ENNReal` at use sites. -/
 private theorem measurable_archWeight_ennreal :
     Measurable (fun t => (archWeight t).toNNReal : ℝ → NNReal) :=
   measurable_real_toNNReal.comp
