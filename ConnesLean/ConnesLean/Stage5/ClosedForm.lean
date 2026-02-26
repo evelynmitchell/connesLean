@@ -21,7 +21,6 @@ B(f,g) = (E(f+g) - E(f-g))/4 is automatically symmetric; no separate field is ne
 import ConnesLean.Stage5.SymbolLowerBound
 import ConnesLean.Stage2.EnergyForm
 import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.MeasureTheory.Function.L2Space
 
 namespace ConnesLean
 
@@ -84,11 +83,11 @@ axiom energyForm_eq_fourierSymbol_integral (cutoffLambda : ℝ) (hLam : 1 < cuto
 /-! ## Domain characterization (Proposition 6, Step 2, axiomatized) -/
 
 /-- The form domain equals the weighted Fourier space:
-    `G ∈ D(E_λ) ↔ G ∈ L² ∧ ∫ ψ_λ(ξ)|Ĝ(ξ)|² dξ < ∞`.
+    `G ∈ D(E_λ) ↔ Ĝ ∈ L² ∧ ∫ ψ_λ(ξ)|Ĝ(ξ)|² dξ < ∞`.
 
-    This is immediate from the Fourier representation: `E_λ(G) < ∞` iff the
-    weighted integral converges, and convergence of `∫ ψ_λ|Ĝ|²` requires `Ĝ ∈ L²`
-    (since `ψ_λ ≥ 0`).
+    The two conditions are: (1) `∫ ‖Ĝ(ξ)‖₊² dξ < ∞` (Fourier transform in L²),
+    and (2) `∫ ψ_λ(ξ) ‖Ĝ(ξ)‖₊² dξ < ∞` (weighted Fourier integrability).
+    By Plancherel, condition (1) is equivalent to `G ∈ L²`.
 
     **Why axiom:** Depends on the Fourier representation axiom. -/
 axiom formDomain_eq_weighted_fourier (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda)
