@@ -58,7 +58,7 @@ theorem primeEnergy_eq_zero_of_energyForm_eq_zero {cutoffLambda : ℝ} {G : ℝ 
 /-- If w(t) · ‖G̃ − S_t G̃‖² = 0 and t > 0 (so w(t) > 0), then ‖G̃ − S_t G̃‖² = 0.
 
     Reference: lamportform.tex, Lemma 7, Step 2. -/
-theorem translationNormSq_zero_of_weighted_zero {G : ℝ → ℂ} {L t : ℝ}
+theorem translationOp_normSq_zero_of_weighted_zero {G : ℝ → ℂ} {L t : ℝ}
     (ht : 0 < t) (h : archEnergyIntegrand G L t = 0) :
     ∫⁻ u, ‖zeroExtend G (logInterval L) u -
            translationOp t (zeroExtend G (logInterval L)) u‖₊ ^ (2 : ℝ) ∂volume = 0 := by
@@ -203,13 +203,30 @@ theorem energyForm_indicator_null_or_conull
       ∫⁻ u, ‖φ u - translationOp t φ u‖₊ ^ (2 : ℝ) ∂volume = 0 := by
     filter_upwards [h_integrand_ae, ae_restrict_mem measurableSet_Ioo]
       with t h_zero ht
-    exact translationNormSq_zero_of_weighted_zero ht.1 h_zero
+    exact translationOp_normSq_zero_of_weighted_zero ht.1 h_zero
+  -- Measurability of φ (needed for axiom and later steps)
+  have hφ_meas : Measurable φ := hG_meas.indicator (measurableSet_logInterval L)
+  -- Finite L² norm of φ (indicator of bounded set has finite L² norm)
+  have hφ_sq : ∫⁻ u, ‖φ u‖₊ ^ (2 : ℝ) ∂volume < ⊤ := by
+    -- φ = zeroExtend (B.indicator 1) I, so ‖φ u‖ ≤ 1 and φ = 0 outside I
+    have h_le : ∀ u, (‖φ u‖₊ : ENNReal) ^ (2 : ℝ) ≤ I.indicator 1 u := by
+      intro u; simp only [φ, zeroExtend, Set.indicator]
+      split_ifs with hI
+      · -- u ∈ I: ‖G u‖₊ ^ 2 ≤ 1 since G = B.indicator 1
+        simp only [Pi.one_apply, G, Set.indicator]
+        split_ifs with hB
+        · simp [nnnorm_one]
+        · simp
+      · simp
+    calc ∫⁻ u, ‖φ u‖₊ ^ (2 : ℝ) ∂volume
+        ≤ ∫⁻ u, I.indicator 1 u ∂volume := lintegral_mono h_le
+      _ = volume I := lintegral_indicator_one (measurableSet_logInterval L)
+      _ < ⊤ := measure_Ioo_lt_top
   -- Step 3: continuity upgrade (via axiom) — for ALL t ∈ (0, 2L)
   have h_norm_all : ∀ t ∈ Ioo 0 (2 * L),
       ∫⁻ u, ‖φ u - translationOp t φ u‖₊ ^ (2 : ℝ) ∂volume = 0 :=
-    continuous_ae_zero_imp_zero (translation_norm_sq_continuous φ) h_norm_ae
-  -- Measurability of φ
-  have hφ_meas : Measurable φ := hG_meas.indicator (measurableSet_logInterval L)
+    continuous_ae_zero_imp_zero
+      (translation_norm_sq_continuous φ hφ_meas hφ_sq) h_norm_ae
   -- Step 4: for each t, get pointwise a.e. equality → indicator invariance
   have h_ae_shift : ∀ t, 0 < t → t < 2 * L →
       ∀ᵐ u ∂(volume.restrict (I ∩ preimage (· - t) I)),

@@ -82,7 +82,8 @@ theorem translationOp_lintegral_norm_eq (t : ℝ) (φ : ℝ → ℂ) :
 /-! ## Strong continuity of translations in L² -/
 
 /-- **Axiom** (Strong continuity of translations in L²):
-    The map `t ↦ ∫ ‖φ(u) − φ(u−t)‖² du` is continuous for any `φ : ℝ → ℂ`.
+    For measurable `φ` with finite L² norm, the map `t ↦ ∫ ‖φ(u) − φ(u−t)‖² du`
+    is continuous.
 
     This is a standard result: the translation group `{S_t}_{t ∈ ℝ}` is
     strongly continuous on L²(ℝ) (Engel-Nagel, Thm I.5.8).
@@ -93,7 +94,9 @@ theorem translationOp_lintegral_norm_eq (t : ℝ) (φ : ℝ → ℂ) :
     or dominated convergence — both paths need unformalized infrastructure.
 
     Reference: Engel-Nagel, One-Parameter Semigroups, Theorem I.5.8. -/
-axiom translation_norm_sq_continuous (φ : ℝ → ℂ) :
+axiom translation_norm_sq_continuous (φ : ℝ → ℂ)
+    (hφ_meas : Measurable φ)
+    (hφ_sq : ∫⁻ u, ‖φ u‖₊ ^ (2 : ℝ) ∂volume < ⊤) :
     Continuous (fun t => ∫⁻ u, ‖φ u - translationOp t φ u‖₊ ^ (2 : ℝ) ∂volume)
 
 end
