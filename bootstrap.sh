@@ -373,7 +373,7 @@ ensure_lean_lsp_mcp() {
     fi
 
     log_info "Adding lean-lsp-mcp server to Claude Code..."
-    claude mcp add lean-lsp -s project -- uvx lean-lsp-mcp
+    claude mcp add lean-lsp -s project -- uvx lean-lsp-mcp --loogle-local
 
     if [[ -f ".mcp.json" ]] && has_cmd jq && jq -e '.mcpServers["lean-lsp"]' .mcp.json &>/dev/null; then
         log_ok "lean-lsp-mcp configured"
