@@ -4,15 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 
 # Compact Embedding D(E_λ) ↪ L²(I)
 
-Reference: lamportform.tex, Section 7.4, lines 937–1010 (Proposition 8, Lemma 13).
+Reference: lamportform.tex, lines 1061–1157 (Theorem KR, Lemma 13, Proposition 8).
 
 This file defines the compact embedding of the form domain into L²(I):
 - `IsRelativelyCompactL2`: sequential compactness in L²
 - `formNormBall`: the graph-norm ball {φ : supp ⊆ I, ‖φ‖² + E_λ(φ) ≤ M}
-- Basic properties: zero membership, nonemptiness, monotonicity, domain inclusion
-
-The Kolmogorov-Riesz compactness criterion and the main compact embedding
-theorem will be added in a follow-up.
+- `kolmogorov_riesz_compact`: KR criterion for compactly supported L² functions
+- `formNormBall_equicontinuous`: translation equicontinuity from form norm (Lemma 13)
+- `formNormBall_isRelativelyCompactL2`: compact embedding (Proposition 8)
 -/
 
 import ConnesLean.Stage5.ClosedForm
@@ -48,6 +47,33 @@ def formNormBall (cutoffLambda : ℝ) (M : ENNReal) : Set (ℝ → ℂ) :=
     Function.support φ ⊆ Icc (-(Real.log cutoffLambda)) (Real.log cutoffLambda) ∧
     (∫⁻ u, ‖φ u‖₊ ^ (2 : ℝ)) + energyForm cutoffLambda φ ≤ M}
 
+/-! ## Kolmogorov-Riesz criterion and compact embedding -/
+
+/-- Kolmogorov-Riesz compactness criterion for compactly supported L² functions.
+    If K is a set of functions supported in [−R, R] with uniformly bounded L² norms
+    and translation equicontinuity, then K is relatively compact in L².
+
+    Reference: Brezis, Corollary 4.27. The compact support condition subsumes
+    the general tightness condition. -/
+axiom kolmogorov_riesz_compact (K : Set (ℝ → ℂ)) (R : ℝ)
+    (h_supp : ∀ φ ∈ K, Function.support φ ⊆ Icc (-R) R)
+    (h_bdd : ∃ M : ENNReal, M < ⊤ ∧ ∀ φ ∈ K, (∫⁻ u, ‖φ u‖₊ ^ (2 : ℝ)) ≤ M)
+    (h_equi : ∀ ε : ENNReal, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ φ ∈ K, ∀ h : ℝ,
+      |h| < δ → (∫⁻ u, ‖φ (u - h) - φ u‖₊ ^ (2 : ℝ)) < ε) :
+    IsRelativelyCompactL2 K
+
+/-- The form-norm ball satisfies translation equicontinuity: for any ε > 0,
+    there exists δ > 0 such that all φ in the form-norm ball satisfy
+    ‖τ_h φ − φ‖₂² < ε whenever |h| < δ.
+
+    Reference: lamportform.tex, Lemma 13 (lines 1078–1127). Uses Plancherel
+    and frequency splitting to convert the form-norm bound into equicontinuity. -/
+axiom formNormBall_equicontinuous (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda)
+    (M : ENNReal) (hM : M < ⊤) :
+    ∀ ε : ENNReal, 0 < ε → ∃ δ : ℝ, 0 < δ ∧
+      ∀ φ ∈ formNormBall cutoffLambda M, ∀ h : ℝ,
+        |h| < δ → (∫⁻ u, ‖φ (u - h) - φ u‖₊ ^ (2 : ℝ)) < ε
+
 /-! ## Proved theorems -/
 
 /-- The zero function belongs to the form-norm ball for any M ≥ 0. -/
@@ -76,6 +102,19 @@ theorem formNormBall_subset_formDomain (cutoffLambda : ℝ) {M : ENNReal} (hM : 
   intro h_top
   rw [h_top, add_top, top_le_iff] at hbound
   exact absurd hbound (ne_of_lt hM)
+
+/-- The form-norm ball is relatively compact in L²: the compact embedding
+    D(E_λ) ↪ L²(I). Combines the Kolmogorov-Riesz criterion with the
+    translation equicontinuity of the form-norm ball.
+
+    Reference: lamportform.tex, Proposition 8 (lines 1129–1157). -/
+theorem formNormBall_isRelativelyCompactL2 (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda)
+    (M : ENNReal) (hM : M < ⊤) :
+    IsRelativelyCompactL2 (formNormBall cutoffLambda M) :=
+  kolmogorov_riesz_compact _ (Real.log cutoffLambda)
+    (fun _ hφ => hφ.1)
+    ⟨M, hM, fun _ hφ => le_trans le_self_add hφ.2⟩
+    (formNormBall_equicontinuous cutoffLambda hLam M hM)
 
 end
 
