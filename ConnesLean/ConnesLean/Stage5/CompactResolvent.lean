@@ -102,7 +102,7 @@ theorem resolvent_mem_formNormBall (cutoffLambda : ℝ)
     (T : KatoOperator cutoffLambda) (f : ℝ → ℂ)
     (hsupp : Function.support f ⊆
       Icc (-(Real.log cutoffLambda)) (Real.log cutoffLambda))
-    (hbdd : (∫⁻ u, ‖f u‖₊ ^ (2 : ℝ)) ≤ C) :
+    {C : ENNReal} (hbdd : (∫⁻ u, ‖f u‖₊ ^ (2 : ℝ)) ≤ C) :
     T.resolvent f ∈ formNormBall cutoffLambda C :=
   ⟨T.resolvent_supported f hsupp, le_trans (T.form_identity f) hbdd⟩
 
