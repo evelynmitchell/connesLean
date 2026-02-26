@@ -4,7 +4,8 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "lean-lsp-mcp"
+        "lean-lsp-mcp",
+        "--loogle-local"
       ],
       "env": {
         "LEAN_PROJECT_PATH": "/workspaces/connesLean/ConnesLean",
