@@ -17,3 +17,4 @@ import ConnesLean.Stage4.TranslationInvariance
 import ConnesLean.Stage4.MollificationConstancy
 import ConnesLean.Stage4.NullOrConull
 import ConnesLean.Stage5.FourierSymbol
+import ConnesLean.Stage5.SymbolLowerBound

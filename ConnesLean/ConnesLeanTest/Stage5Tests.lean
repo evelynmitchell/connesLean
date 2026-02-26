@@ -10,7 +10,7 @@ the Fourier symbol and its basic properties.
 
 import ConnesLean
 
-open ConnesLean MeasureTheory Set Real
+open ConnesLean MeasureTheory Set Real Filter
 
 noncomputable section
 
@@ -65,5 +65,32 @@ example (cutoffLambda ξ : ℝ) :
     fourierSymbol cutoffLambda ξ =
     archFourierSymbol (Real.log cutoffLambda) ξ + primeFourierSymbol cutoffLambda ξ :=
   rfl
+
+/-! ## SymbolLowerBound tests (Stage 5B) -/
+
+/-- sinh bound: sinh t ≤ t · cosh t for t ≥ 0. -/
+example (t : ℝ) (ht : 0 ≤ t) : Real.sinh t ≤ t * Real.cosh t :=
+  sinh_le_mul_cosh ht
+
+/-- Weight lower bound: w(t) ≥ 1/(2t) for t ∈ (0,1]. -/
+example (t : ℝ) (ht : 0 < t) (ht1 : t ≤ 1) : 1 / (2 * t) ≤ archWeight t :=
+  archWeight_ge_inv_two_t ht ht1
+
+/-- Logarithmic growth of the Fourier symbol. -/
+example (Λ : ℝ) (h : 1 < Λ) :
+    ∃ c₁ c₂ : ℝ, 0 < c₁ ∧ ∃ ξ₀ : ℝ, 2 ≤ ξ₀ ∧
+      ∀ ξ : ℝ, ξ₀ ≤ |ξ| → c₁ * Real.log |ξ| - c₂ ≤ fourierSymbol Λ ξ :=
+  fourierSymbol_ge_log Λ h
+
+/-- Frequency moment control. -/
+example (Λ : ℝ) (h : 1 < Λ) :
+    ∃ a b : ℝ, 0 < a ∧ 0 < b ∧
+      ∀ ξ : ℝ, Real.log (2 + |ξ|) ≤ a + b * fourierSymbol Λ ξ :=
+  frequency_moment_control Λ h
+
+/-- The Fourier symbol tends to +∞. -/
+example (Λ : ℝ) (h : 1 < Λ) :
+    Tendsto (fun ξ => fourierSymbol Λ ξ) atTop atTop :=
+  fourierSymbol_tendsto_atTop Λ h
 
 end
