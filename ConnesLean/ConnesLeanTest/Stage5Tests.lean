@@ -112,4 +112,24 @@ example (Λ : ℝ) (h : 1 < Λ) (G : ℝ → ℂ) (hG : G ∈ formDomain Λ) :
 example (Λ : ℝ) (h : 1 < Λ) : IsClosedEnergyForm Λ :=
   energyForm_closed_on_line Λ h
 
+/-! ## CompactEmbedding tests (Stage 5D) -/
+
+/-- The zero function belongs to any form-norm ball. -/
+example (Λ : ℝ) (M : ENNReal) : (0 : ℝ → ℂ) ∈ formNormBall Λ M :=
+  zero_mem_formNormBall Λ M
+
+/-- The form-norm ball is nonempty. -/
+example (Λ : ℝ) (M : ENNReal) : (formNormBall Λ M).Nonempty :=
+  formNormBall_nonempty Λ M
+
+/-- The form-norm ball is monotone in the bound. -/
+example (Λ : ℝ) (M M' : ENNReal) (h : M ≤ M') :
+    formNormBall Λ M ⊆ formNormBall Λ M' :=
+  formNormBall_monotone Λ h
+
+/-- Form-norm ball elements belong to the form domain. -/
+example (Λ : ℝ) (M : ENNReal) (hM : M < ⊤) :
+    formNormBall Λ M ⊆ formDomain Λ :=
+  formNormBall_subset_formDomain Λ hM
+
 end
