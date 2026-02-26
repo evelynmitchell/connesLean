@@ -16,7 +16,6 @@ theorem will be added in a follow-up.
 -/
 
 import ConnesLean.Stage5.ClosedForm
-import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 namespace ConnesLean
 
