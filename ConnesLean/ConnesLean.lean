@@ -20,3 +20,4 @@ import ConnesLean.Stage5.FourierSymbol
 import ConnesLean.Stage5.SymbolLowerBound
 import ConnesLean.Stage5.ClosedForm
 import ConnesLean.Stage5.CompactEmbedding
+import ConnesLean.Stage5.CompactResolvent
