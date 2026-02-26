@@ -93,4 +93,23 @@ example (Λ : ℝ) (h : 1 < Λ) :
     Tendsto (fun ξ => fourierSymbol Λ ξ) atTop atTop :=
   fourierSymbol_tendsto_atTop Λ h
 
+/-! ## ClosedForm tests (Stage 5C) -/
+
+/-- The zero function belongs to the form domain. -/
+example (Λ : ℝ) : (0 : ℝ → ℂ) ∈ formDomain Λ := zero_mem_formDomain Λ
+
+/-- The form domain is nonempty. -/
+example (Λ : ℝ) : (formDomain Λ).Nonempty := formDomain_nonempty Λ
+
+/-- Fourier representation of the energy form (axiom instantiation). -/
+example (Λ : ℝ) (h : 1 < Λ) (G : ℝ → ℂ) (hG : G ∈ formDomain Λ) :
+    (energyForm Λ G).toReal =
+    (1 / (2 * Real.pi)) *
+    ∫ ξ, fourierSymbol Λ ξ * ‖FourierTransform.fourier G ξ‖ ^ 2 :=
+  energyForm_eq_fourierSymbol_integral Λ h G hG
+
+/-- The energy form is closed on L²(ℝ) (axiom instantiation). -/
+example (Λ : ℝ) (h : 1 < Λ) : IsClosedEnergyForm Λ :=
+  energyForm_closed_on_line Λ h
+
 end
