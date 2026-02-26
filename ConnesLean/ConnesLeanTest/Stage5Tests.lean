@@ -144,4 +144,27 @@ example (Λ : ℝ) (h : 1 < Λ) (M : ENNReal) (hM : M < ⊤) :
     IsRelativelyCompactL2 (formNormBall Λ M) :=
   formNormBall_isRelativelyCompactL2 Λ h M hM
 
+/-! ## CompactResolvent tests (Stage 5E) -/
+
+/-- Kato operator exists (axiom instantiation). -/
+example (Λ : ℝ) (h : 1 < Λ) : KatoOperator Λ := kato_operator Λ h
+
+/-- Kato resolvent maps to form domain. -/
+example (Λ : ℝ) (h : 1 < Λ) (f : ℝ → ℂ) :
+    (kato_operator Λ h).resolvent f ∈ formDomain Λ :=
+  kato_resolvent_in_formDomain Λ h f
+
+/-- Resolvent maps bounded functions to form-norm ball. -/
+example (Λ : ℝ) (h : 1 < Λ) (f : ℝ → ℂ) (C : ENNReal)
+    (hsupp : Function.support f ⊆
+      Icc (-(Real.log Λ)) (Real.log Λ))
+    (hbdd : (∫⁻ u, ‖f u‖₊ ^ (2 : ℝ)) ≤ C) :
+    (kato_operator Λ h).resolvent f ∈ formNormBall Λ C :=
+  resolvent_mem_formNormBall Λ (kato_operator Λ h) f hsupp hbdd
+
+/-- Main theorem: A_λ has compact resolvent. -/
+example (Λ : ℝ) (h : 1 < Λ) :
+    HasCompactResolvent Λ (kato_operator Λ h) :=
+  compact_resolvent_of_compact_embedding Λ h
+
 end
