@@ -33,7 +33,7 @@ noncomputable section
     Proof: The function `g(t) = t · cosh t - sinh t` satisfies `g(0) = 0` and
     `g'(t) = t · sinh t ≥ 0` for `t ≥ 0`, so `g` is monotone on `[0, ∞)`.
 
-    This is the key step in showing `sinh t ≤ t · exp t` and hence
+    This is the key step in showing `sinh t ≤ t · exp (t/2)` and hence
     `w(t) = exp(t/2)/(2 sinh t) ≥ 1/(2t)`. -/
 theorem sinh_le_mul_cosh {t : ℝ} (ht : 0 ≤ t) : Real.sinh t ≤ t * Real.cosh t := by
   suffices h : 0 ≤ t * Real.cosh t - Real.sinh t by linarith
