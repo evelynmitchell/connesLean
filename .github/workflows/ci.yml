@@ -58,6 +58,16 @@ jobs:
             exit 1
           fi
 
+      - name: Check for ℝ≥0 notation
+        working-directory: ConnesLean
+        run: |
+          # ℝ≥0 and ℝ≥0∞ parse as 3+ tokens (ℝ, ≥, 0) causing subtle type errors.
+          # Use NNReal / ENNReal names instead.
+          if grep -rn 'ℝ≥0' . --include='*.lean' --exclude-dir='.lake'; then
+            echo "::error::Use NNReal/ENNReal instead of ℝ≥0/ℝ≥0∞ notation (parses as 3 tokens)"
+            exit 1
+          fi
+
       - name: Build library
         working-directory: ConnesLean
         run: lake build ConnesLean
