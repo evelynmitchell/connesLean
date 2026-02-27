@@ -5,7 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 # Stage 6 Property Tests
 
 Verification tests for Stage 6 definitions and theorems covering
-indicator energy (6A), invariance splitting (6B), and constant in domain (6C).
+indicator energy (6A), invariance splitting (6B), constant in domain (6C),
+and cross-term vanishing (6D).
 -/
 
 import ConnesLean
@@ -89,5 +90,19 @@ example {B : Set ℝ} {L : ℝ} :
               zeroExtend ((logInterval L \ B).indicator (fun _ => (1 : ℂ))) (logInterval L) u) =
     (0 : ℝ → ℂ) :=
   indicator_complement_mul_zero
+
+/-! ## CrossTermVanishing tests (Stage 6D) -/
+
+/-- Indicator invariance under translation for semigroup-invariant ideals. -/
+example (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda)
+    (ideal : SemigroupInvariantIdeal cutoffLambda) :
+    ∀ t, 0 < t → t < 2 * Real.log cutoffLambda →
+    ∀ᵐ u ∂(volume.restrict
+      (logInterval (Real.log cutoffLambda) ∩
+        Set.preimage (· - t)
+          (logInterval (Real.log cutoffLambda)))),
+    ideal.B.indicator (1 : ℝ → ℝ) u =
+    ideal.B.indicator (1 : ℝ → ℝ) (u - t) :=
+  indicator_invariant_of_ideal cutoffLambda hLam ideal
 
 end
