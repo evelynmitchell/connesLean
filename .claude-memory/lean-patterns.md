@@ -153,3 +153,21 @@
 ## `rw` with complex set expressions
 - When target involves lambdas/preimages, `rw` often fails — use `set B' := ...` + `have h_eq`
 - For ENNReal coercions: `↑(x.toNNReal) = ENNReal.ofReal x` holds by `rfl`, so `change` can switch
+
+## ENNReal rpow patterns
+- **Pre-compute rpow facts**: Declare `h_zero_rpow : (0:ENNReal) ^ (2:ℝ) = 0 := ENNReal.zero_rpow_of_pos ...` and `h_one_rpow : (1:ENNReal) ^ (2:ℝ) = 1 := ENNReal.one_rpow _` up front, feed to `simp only`. Avoids `simp`/`norm_num` failures on ENNReal rpow.
+- **`ENNReal.rpow_eq_zero_iff`** (bidirectional): `x ^ y = 0 ↔ (x = 0 ∧ 0 < y) ∨ (x = ⊤ ∧ y < 0)`. Use this instead of constructing positivity proofs for rpow. `norm_num` dispatches the impossible ⊤ branch.
+- **`ENNReal.rpow_le_rpow`**: `a ≤ b → 0 ≤ r → a ^ r ≤ b ^ r`. Useful for monotone bounds.
+- **Always use `NNReal` / `ENNReal`** in type signatures, never `ℝ≥0` / `ℝ≥0∞`. The notation is 3 tokens (`ℝ`, `≥`, `0`) and will misparse without the right `open scoped`. The spelled-out name is unambiguous.
+
+## Pi.zero_apply for ae filter
+- `f =ᶠ[ae μ] 0` unfolds to `∀ᵐ x ∂μ, f x = (0 : α → β) x`, NOT `f x = 0`
+- After `filter_upwards [h_ae] with u hu`, always do `simp only [Pi.zero_apply] at hu` to get `f u = 0`
+
+## Measurable.indicator argument order
+- `Measurable.indicator` takes `(hf : Measurable f) (hs : MeasurableSet s)` — dot notation on `Measurable`
+- `measurable_const.indicator hB_meas` ✓ (NOT `hB_meas.indicator measurable_const`)
+
+## lintegral_eq_zero_iff with restricted measures
+- `lintegral_eq_zero_iff (hf : Measurable f) : ∫⁻ a, f a ∂μ = 0 ↔ f =ᵐ[μ] 0`
+- Works with any measure including `volume.restrict S` — no `.restrict` suffix needed on measurability

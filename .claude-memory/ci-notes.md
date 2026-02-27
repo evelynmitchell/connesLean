@@ -10,6 +10,11 @@
 - Scans from ConnesLean/ working directory, excludes `.lake/` dependencies
 - In docs, reference "sorries" (plural) to avoid grep false positives
 
+## ℝ≥0 notation lint
+- CI step: `grep -rn 'ℝ≥0' . --include='*.lean' --exclude-dir='.lake'`
+- Catches both `ℝ≥0` and `ℝ≥0∞` (substring match)
+- Use `NNReal` / `ENNReal` names instead — the notation parses as 3+ tokens (ℝ, ≥, 0)
+
 ## Lake build commands
 - All lake commands must run from `ConnesLean/` directory
 - `lake build ConnesLean` — build the library

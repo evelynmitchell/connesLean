@@ -6,12 +6,15 @@
 - CI sorry regression check added (grep -rnw in CI, blocks merge)
 - **Stage 4**: Complete. 5 PRs merged (PRs #45-#49, Issues #40-#44).
 - **Stage 5**: Complete. 5 PRs merged, 0 sorries, 9 axioms (PRs #55-#60, Issues #50-#54).
-- **Stage 6**: Redo planned. Previous PRs (#66-#70) superseded.
-  - Issues: #61 (6A), #62 (6B), #63 (6C), #64 (6D), #65 (6E)
-  - Redo all 5 files from scratch with proper discipline:
-    1. Plan each file → get user review → then implement
-    2. Write in 100-150 line chunks, diagnostics after each
-    3. Don't move to next file until current is clean and user has seen it
+- **Stage 6**: Re-split into 8 files. Previous code reverted, old issues closed.
+  - **#71 (6A-i IndicatorEnergy)**: Done. PR #78, 253L, 0 extra axioms.
+  - #72 (6A-ii EnergyPositivity ~150L)
+  - #62 (6B InvarianceSplit ~130L, unchanged)
+  - #73 (6C ConstantInDomain ~250L)
+  - #74 (6D-i NormInequality ~200L), #75 (6D-ii EnergyEquality ~200L), #76 (6D-iii CrossVanishing ~200L)
+  - #77 (6E Irreducibility ~80L)
+  - Chain: #71 → #72 → #73 → #74 → #75 → #76 → #77, with #62 → #73
+  - Discipline: plan → user review → implement in 100-150 line chunks
 - **Axiom elimination roadmap**: `docs/axiom-elimination-roadmap.md`
   - 9 of 10 axioms eliminable (~760 lines), kato_operator stays as axiom
 
