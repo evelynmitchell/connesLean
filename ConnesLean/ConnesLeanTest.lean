@@ -3,3 +3,4 @@ import ConnesLeanTest.Stage2Tests
 import ConnesLeanTest.Stage3Tests
 import ConnesLeanTest.Stage4Tests
 import ConnesLeanTest.Stage5Tests
+import ConnesLeanTest.Stage6Tests
