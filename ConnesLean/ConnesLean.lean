@@ -21,6 +21,3 @@ import ConnesLean.Stage5.SymbolLowerBound
 import ConnesLean.Stage5.ClosedForm
 import ConnesLean.Stage5.CompactEmbedding
 import ConnesLean.Stage5.CompactResolvent
-import ConnesLean.Stage6.IndicatorEnergy
-import ConnesLean.Stage6.InvarianceSplit
-import ConnesLean.Stage6.ConstantInDomain
