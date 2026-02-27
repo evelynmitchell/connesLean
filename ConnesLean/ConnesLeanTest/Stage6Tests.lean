@@ -39,7 +39,7 @@ example {G : ℝ → ℂ} {L t : ℝ} (ht : 0 < t)
 
 /-- The archimedean weight (as NNReal) is measurable. -/
 example : Measurable (fun t : ℝ => (archWeight t).toNNReal) :=
-  measurable_archWeight_ennreal
+  measurable_archWeight_toNNReal
 
 /-! ## Main theorem test -/
 

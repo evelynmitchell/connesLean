@@ -55,7 +55,7 @@ theorem translationOp_normSq_zero_of_weighted_zero
   · exact h_int
 
 /-- The map `t ↦ (archWeight t).toNNReal` is measurable. -/
-theorem measurable_archWeight_ennreal :
+theorem measurable_archWeight_toNNReal :
     Measurable (fun t : ℝ => (archWeight t).toNNReal) := by
   unfold archWeight
   exact measurable_real_toNNReal.comp
@@ -183,7 +183,7 @@ theorem energyForm_indicator_null_or_conull
   have hG_meas : Measurable G := measurable_const.indicator hB_meas
   have h_meas_integrand : Measurable (archEnergyIntegrand G L) := by
     unfold archEnergyIntegrand
-    exact measurable_archWeight_ennreal.coe_nnreal_ennreal.mul
+    exact measurable_archWeight_toNNReal.coe_nnreal_ennreal.mul
       (measurable_archEnergyIntegrand hG_meas L)
   have h_integrand_ae : ∀ᵐ t ∂(volume.restrict (Ioo 0 (2 * L))),
       archEnergyIntegrand G L t = 0 := by
