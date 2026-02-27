@@ -68,6 +68,14 @@ jobs:
             exit 1
           fi
 
+      - name: Check for maxHeartbeats overrides
+        working-directory: ConnesLean
+        run: |
+          # Track maxHeartbeats overrides — not a failure, just an inventory.
+          # Unexpected new overrides may indicate proof inefficiency.
+          echo "maxHeartbeats overrides found:"
+          grep -rn 'set_option maxHeartbeats' . --include='*.lean' --exclude-dir='.lake' || echo "  (none)"
+
       - name: Build library
         working-directory: ConnesLean
         run: lake build ConnesLean
@@ -79,6 +87,34 @@ jobs:
       - name: Build LSpec tests
         working-directory: ConnesLean
         run: lake build connes_lspec
+
+      - name: Build soundness checks
+        working-directory: ConnesLean
+        run: |
+          # Build produces #print axioms output — capture for audit.
+          lake build soundness_check 2>&1 | tee soundness_build.log
+
+      - name: Audit axiom dependencies
+        working-directory: ConnesLean
+        run: |
+          # Verify no theorem depends on sorryAx (would indicate a sorry slipped past the grep check).
+          if grep -q 'sorryAx' soundness_build.log; then
+            echo "::error::sorryAx found in axiom dependencies — a sorry exists in a proof"
+            exit 1
+          fi
+          echo "No sorryAx dependencies found."
+
+          # Count project axioms — alert if the count changes.
+          AXIOM_COUNT=$(grep -rn '^axiom ' . --include='*.lean' --exclude-dir='.lake' | wc -l)
+          echo "Project axiom declarations: $AXIOM_COUNT"
+          if [ "$AXIOM_COUNT" -gt 10 ]; then
+            echo "::warning::Axiom count ($AXIOM_COUNT) exceeds expected 10 — review new axioms"
+          fi
+          grep -rn '^axiom ' . --include='*.lean' --exclude-dir='.lake' || true
+
+      - name: Run soundness checks
+        working-directory: ConnesLean
+        run: lake exe soundness_check
 
       - name: Run LSpec tests
         working-directory: ConnesLean
