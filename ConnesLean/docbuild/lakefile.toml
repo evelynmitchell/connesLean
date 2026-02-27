@@ -1,0 +1,14 @@
+name = "docbuild"
+version = "0.1.0"
+keywords = ["documentation"]
+
+# Reference the parent ConnesLean library
+[[require]]
+name = "ConnesLean"
+path = ".."
+
+# doc-gen4 documentation generator
+[[require]]
+name = "«doc-gen4»"
+scope = "leanprover"
+rev = "main"

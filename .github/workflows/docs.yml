@@ -1,0 +1,93 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one docs deployment at a time
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Cache elan
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.elan/toolchains
+          key: ${{ runner.os }}-elan-docs-${{ hashFiles('ConnesLean/lean-toolchain') }}
+
+      - name: Cache lake (main library)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ConnesLean/.lake/packages
+            ConnesLean/.lake/build
+          key: ${{ runner.os }}-lake-docs-${{ hashFiles('ConnesLean/lean-toolchain', 'ConnesLean/lake-manifest.json') }}
+          restore-keys: |
+            ${{ runner.os }}-lake-docs-
+            ${{ runner.os }}-lake-
+
+      - name: Cache lake (docbuild)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ConnesLean/docbuild/.lake
+          key: ${{ runner.os }}-lake-docbuild-${{ hashFiles('ConnesLean/lean-toolchain', 'ConnesLean/docbuild/lakefile.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-lake-docbuild-
+
+      - name: Build main library
+        working-directory: ConnesLean
+        run: |
+          lake update
+          lake exe cache get
+          lake build ConnesLean
+
+      - name: Build documentation
+        working-directory: ConnesLean/docbuild
+        env:
+          MATHLIB_NO_CACHE_ON_UPDATE: 1
+        run: |
+          lake update doc-gen4
+          lake build ConnesLean:docs
+
+      - name: Copy static docs
+        run: |
+          # Copy the concordance and glossary into the generated docs
+          cp docs/concordance.md ConnesLean/docbuild/.lake/build/doc/ 2>/dev/null || true
+          cp docs/glossary.md ConnesLean/docbuild/.lake/build/doc/ 2>/dev/null || true
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ConnesLean/docbuild/.lake/build/doc
+
+  deploy:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
