@@ -40,9 +40,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-lake-
 
-      - name: Install lake deps
+      - name: Resolve lake deps
         working-directory: ConnesLean
-        run: lake update
+        run: lake resolve-deps
 
       - name: Fetch Mathlib cache
         working-directory: ConnesLean
