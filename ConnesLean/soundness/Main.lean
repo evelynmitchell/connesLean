@@ -14,8 +14,9 @@ Run via `lake exe soundness_check`.
 -/
 
 import ConnesLean
+import Lean
 
-open ConnesLean
+open ConnesLean Lean
 
 /-! ## Axiom inventory
 
@@ -88,36 +89,36 @@ section CompileTimeAxiomAudit
     Any change in axiom dependencies will be visible in build logs. -/
 
 -- Stage 1: should be axiom-free (beyond builtins)
-#print axioms @ConnesLean.dilationOp_one
-#print axioms @ConnesLean.mulConv_mulInvol_apply
-#print axioms @ConnesLean.convolution_at_one
-#print axioms @ConnesLean.unitary_identity_id
+#print axioms ConnesLean.dilationOp_one
+#print axioms ConnesLean.mulConv_mulInvol_apply
+#print axioms ConnesLean.convolution_at_one
+#print axioms ConnesLean.unitary_identity_id
 
 -- Stage 2: should be axiom-free (beyond builtins)
-#print axioms @ConnesLean.translationOp_add
-#print axioms @ConnesLean.dilation_eq_translation
-#print axioms @ConnesLean.lintegral_diff_dilation_eq_translation
-#print axioms @ConnesLean.pointwise_mul_zero_of_large_shift
+#print axioms ConnesLean.translationOp_add
+#print axioms ConnesLean.dilation_eq_translation
+#print axioms ConnesLean.lintegral_diff_dilation_eq_translation
+#print axioms ConnesLean.pointwise_mul_zero_of_large_shift
 
 -- Stage 3: should be axiom-free
-#print axioms @ConnesLean.primeConstant_nonpos
-#print axioms @ConnesLean.archWeight_pos
-#print axioms @ConnesLean.energyForm_zero
-#print axioms @ConnesLean.totalCorrection_prime_nonpos
+#print axioms ConnesLean.primeConstant_nonpos
+#print axioms ConnesLean.archWeight_pos
+#print axioms ConnesLean.energyForm_zero
+#print axioms ConnesLean.totalCorrection_prime_nonpos
 
 -- Stage 4: should be axiom-free
-#print axioms @ConnesLean.energyForm_comp_normalContraction_le
-#print axioms @ConnesLean.null_or_conull_of_translation_invariant
-#print axioms @ConnesLean.localAverage_tendsto_ae
+#print axioms ConnesLean.energyForm_comp_normalContraction_le
+#print axioms ConnesLean.null_or_conull_of_translation_invariant
+#print axioms ConnesLean.localAverage_tendsto_ae
 
 -- Stage 5: depends on project axioms
-#print axioms @ConnesLean.fourierSymbol_nonneg
-#print axioms @ConnesLean.fourierSymbol_tendsto_atTop
-#print axioms @ConnesLean.formNormBall_isRelativelyCompactL2
-#print axioms @ConnesLean.compact_resolvent_of_compact_embedding
+#print axioms ConnesLean.fourierSymbol_nonneg
+#print axioms ConnesLean.fourierSymbol_tendsto_atTop
+#print axioms ConnesLean.formNormBall_isRelativelyCompactL2
+#print axioms ConnesLean.compact_resolvent_of_compact_embedding
 
 -- Stage 6: depends on translation_norm_sq_continuous
-#print axioms @ConnesLean.energyForm_indicator_null_or_conull
+#print axioms ConnesLean.energyForm_indicator_null_or_conull
 
 end CompileTimeAxiomAudit
 
@@ -148,23 +149,19 @@ def main : IO UInt32 := do
   IO.println "ConnesLean Soundness Check"
   IO.println "========================="
   IO.println ""
-
   -- Section 1: Axiom inventory
   IO.println "1. Project axiom inventory (10 declared axioms):"
   IO.println ""
   for a in knownProjectAxioms do
     IO.println s!"   - {a}"
   IO.println ""
-
   -- Section 2: Compile-time sanity checks
   IO.println "2. Compile-time sanity checks (no sorryAx in axiom sets):"
   IO.println ""
-
   IO.println s!"   ¬False:  OK (compiled)"
   IO.println s!"   True:    OK (compiled)"
   IO.println s!"   0 ≠ 1:   OK (compiled)"
   IO.println ""
-
   -- Section 3: Axiom audit summary
   IO.println "3. Compile-time axiom audit:"
   IO.println "   (Check build log for #print axioms output)"
@@ -177,16 +174,15 @@ def main : IO UInt32 := do
   IO.println ""
   IO.println "   Expected to depend on project axioms (Stages 5-6):"
   IO.println "     - fourierSymbol_tendsto_atTop → fourierSymbol_ge_log"
-  IO.println "     - formNormBall_isRelativelyCompactL2 → kolmogorov_riesz_compact, formNormBall_equicontinuous"
+  IO.println ("     - formNormBall_isRelativelyCompactL2 → \
+    kolmogorov_riesz_compact, formNormBall_equicontinuous")
   IO.println "     - compact_resolvent_of_compact_embedding → kato_operator + above"
   IO.println "     - energyForm_indicator_null_or_conull → translation_norm_sq_continuous"
   IO.println ""
-
   -- Section 4: maxHeartbeats audit
   IO.println "4. maxHeartbeats overrides (track for Lean version bumps):"
   IO.println "     - ConnesLeanTest/Stage4Tests.lean:102 (800000)"
   IO.println "     - ConnesLeanTest/Stage4Tests.lean:211 (400000)"
   IO.println ""
-
   IO.println "All soundness checks passed."
   return 0
