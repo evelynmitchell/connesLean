@@ -61,24 +61,15 @@ jobs:
           lake exe cache get
           lake build ConnesLean
 
-      - name: Resolve docbuild dependencies
-        working-directory: ConnesLean/docbuild
-        env:
-          MATHLIB_NO_CACHE_ON_UPDATE: 1
-        run: lake resolve-deps
-
-      - name: Fetch mathlib cache for docbuild
-        working-directory: ConnesLean/docbuild
-        # cache get may fail in docbuild context since mathlib is inherited
-        # via path dependency; the main library step already has the oleans
-        continue-on-error: true
-        run: lake exe cache get
-
       - name: Build documentation
         working-directory: ConnesLean/docbuild
         env:
           LEAN_ABORT_ON_PANIC: 1
-        run: lake build ConnesLean:docs
+          MATHLIB_NO_CACHE_ON_UPDATE: 1
+        run: |
+          # Let lake build handle dependency resolution automatically
+          # (lake resolve-deps fails with exit code 1 in the docbuild context)
+          lake build ConnesLean:docs
 
       - name: Copy static docs
         run: |
