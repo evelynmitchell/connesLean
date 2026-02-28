@@ -57,7 +57,6 @@ jobs:
       - name: Build main library
         working-directory: ConnesLean
         run: |
-          lake update
           lake exe cache get
           lake build ConnesLean
 
