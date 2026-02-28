@@ -21,6 +21,16 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
+/-!
+# Multiplicative Haar Measure on ℝ₊*
+
+Defines the multiplicative Haar measure `d*x = dx/x` on `ℝ₊* = (0, ∞)` as the
+pushforward of Lebesgue measure under `exp : ℝ → ℝ₊*`. Establishes the
+exponential-logarithm equivalence and measure preservation under division.
+
+Reference: lamportform.tex, Section 1, lines 94–101.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set Filter

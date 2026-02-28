@@ -21,6 +21,15 @@ linear isometry, independent of the multiplicative setup.
 
 import Mathlib.Analysis.InnerProductSpace.Basic
 
+/-!
+# Lemma 2: A Basic Unitary Identity
+
+For any linear isometry `U` on a Hilbert space and any vector `h`:
+  `2 Re⟨h, Uh⟩ = 2‖h‖² - ‖h - Uh‖²`
+
+Reference: lamportform.tex, Lemma 1.2 (`lem:unitary`), lines 166–191.
+-/
+
 namespace ConnesLean
 
 open RCLike

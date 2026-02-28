@@ -23,11 +23,23 @@ Key estimates:
 
 import ConnesLean.Stage2.LogCoordinates
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+
+/-!
+# Archimedean Weight and Pointwise Bounds
+
+Defines the archimedean weight `w(t) = exp(t/2) / (2 sinh t)` for `t > 0` and proves
+key estimates: positivity, `sinh t ≥ t`, `w(t) ≤ exp(t/2)/(2t)`, the cancellation
+identity `2 exp(-t/2) w(t) = 1/sinh(t)`, tail bound `1/sinh(t) < 4 exp(-t)` for `t ≥ 1`,
+and integrability of correction terms.
+
+Reference: lamportform.tex, Section 2, lines 329–332, 399–416.
+-/
 
 namespace ConnesLean
 

@@ -18,6 +18,16 @@ import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Function.L1Space.Integrable
 
+/-!
+# Multiplicative Convolution and Involution on ℝ₊*
+
+Defines multiplicative convolution `(g ⋆ h)(x) = ∫ g(y) h(x/y) d*y` and involution
+`g*(x) = conj(g(x⁻¹))` on positive reals. Proves involution is involutive and establishes
+Hölder-based integrability.
+
+Reference: lamportform.tex, Section 1, lines 102–109.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Complex

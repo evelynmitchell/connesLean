@@ -16,6 +16,16 @@ This file defines the compact embedding of the form domain into L²(I):
 
 import ConnesLean.Stage5.ClosedForm
 
+/-!
+# Compact Embedding D(E_λ) ↪ L²(I)
+
+Defines sequential L² compactness and the form-norm ball (graph-norm bounded,
+compactly supported). Proves translation equicontinuity of the form-norm ball
+via the Kolmogorov-Riesz criterion and derives the compact embedding result.
+
+Reference: lamportform.tex, Theorem KR, Lemma 13, Proposition 8 (lines 1061–1157).
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set Filter

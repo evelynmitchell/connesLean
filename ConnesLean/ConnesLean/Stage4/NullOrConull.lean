@@ -22,6 +22,16 @@ The key steps:
 
 import ConnesLean.Stage4.MollificationConstancy
 
+/-!
+# Null or Conull Conclusion — Lemma 6
+
+Completes Lemma 6: a translation-invariant indicator on an open interval is either
+ae-null or ae-conull. Uses Lebesgue differentiation on compact subsets to establish
+the dichotomy, then exhaustion by increasing compact intervals for the global result.
+
+Reference: lamportform.tex, Section 6, Lemma 6, Steps 8–10 (lines 617–639).
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Set Filter Metric

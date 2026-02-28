@@ -22,6 +22,16 @@ import ConnesLean.Stage5.SymbolLowerBound
 import ConnesLean.Stage2.EnergyForm
 import Mathlib.Analysis.Fourier.FourierTransform
 
+/-!
+# Closed Energy Form and Form Domain
+
+Defines the form domain `D(E_λ)` and the Kato closed-form structure. Axiomatizes the
+Fourier representation `E_λ(G) = (1/2π) ∫ ψ_λ|Ĝ|² dξ`, domain characterization via
+weighted Fourier space, and closedness on both L²(ℝ) and L²(I).
+
+Reference: lamportform.tex, Section 7.3, Propositions 6–7, lines 844–936.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set Filter

@@ -16,6 +16,17 @@ from Stage 4.
 import ConnesLean.Stage4.NullOrConull
 import ConnesLean.Stage2.EnergyForm
 
+/-!
+# Indicator Energy Criterion — Lemma 7
+
+If the energy form vanishes on an indicator `1_B` for measurable `B ⊆ I`, then `B`
+is either null or conull. Extracts archimedean and prime energy components, upgrades
+ae vanishing to pointwise via strong continuity of translations, and applies the
+null-or-conull theorem from Stage 4.
+
+Reference: lamportform.tex, Lemma 7 (lines 647–696).
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Set Real Filter Metric

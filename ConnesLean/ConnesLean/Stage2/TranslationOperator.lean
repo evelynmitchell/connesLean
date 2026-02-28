@@ -21,6 +21,16 @@ import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Group.LIntegral
 
+/-!
+# Translation Operator on L²(ℝ)
+
+Defines the additive translation operator `S_t φ(u) = φ(u - t)` on L²(ℝ), the additive
+analogue of the dilation operator `U_a` via logarithmic coordinates. Proves measure
+preservation, L² norm invariance, and axiomatizes strong continuity of translations.
+
+Reference: lamportform.tex, Section 2.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real

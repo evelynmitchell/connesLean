@@ -17,6 +17,16 @@ In additive (log) coordinates with `x = e^t`, this becomes:
 
 import ConnesLean.Stage2.ArchimedeanWeight
 
+/-!
+# Archimedean Distribution W_R(f)
+
+Defines the archimedean distribution combining the logarithmic constant term and
+weighted integral of shifted function differences:
+  `W_R(f) = (log 4π + γ) f(1) + ∫₀^∞ (f(eᵗ) + f(e⁻ᵗ) - 2 e⁻ᵗ/² f(1)) w(t) dt`
+
+Reference: lamportform.tex, Section 2, equation (3).
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set

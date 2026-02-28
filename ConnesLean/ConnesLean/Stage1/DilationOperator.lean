@@ -22,6 +22,16 @@ import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Group.LIntegral
 import Mathlib.MeasureTheory.Function.L1Space.Integrable
 
+/-!
+# Dilation Operator on L²(ℝ₊*, d*x)
+
+Defines the dilation operator `U_a g(x) = g(x/a)` on L² with multiplicative Haar measure.
+Proves unitarity (isometry + surjectivity via `U_a⁻¹ = U_{a⁻¹}`), composition properties,
+and Cauchy-Schwarz bounds.
+
+Reference: lamportform.tex, Section 1, lines 110–119.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory

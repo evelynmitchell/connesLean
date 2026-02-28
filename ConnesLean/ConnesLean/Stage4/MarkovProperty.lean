@@ -21,6 +21,17 @@ The proof has three layers:
 import ConnesLean.Stage4.NormalContraction
 import ConnesLean.Stage2.EnergyForm
 
+/-!
+# Markov Property for the Energy Form
+
+Proves that applying a normal contraction `Φ` does not increase the energy:
+`E_λ(Φ ∘ G) ≤ E_λ(G)`. The proof proceeds in three layers: pointwise Lipschitz
+inequality, integral monotonicity via `lintegral_mono`, and assembly over
+archimedean and prime terms.
+
+Reference: lamportform.tex, Section 5, lines 476–479.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set Finset

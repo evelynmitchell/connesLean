@@ -19,6 +19,16 @@ The key steps:
 import Mathlib.MeasureTheory.Measure.Restrict
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
+/-!
+# Translation-Invariance Setup for Indicator Functions
+
+Defines the hypothesis that an indicator `1_B` is ae translation-invariant on an open
+interval `I`, and reduces the ae statement from `I ∩ (I+t)` to compact subintervals
+`J ⊂⊂ I` using the margin `δ₀ = min(a - α, β - b)`.
+
+Reference: lamportform.tex, Section 6, Lemma 6, Steps 1–3 (lines 542–576).
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Set Filter

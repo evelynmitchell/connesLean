@@ -20,6 +20,20 @@ the pushforward of Lebesgue measure under `exp : ℝ → R_+*`.
 
 import Mathlib.Analysis.InnerProductSpace.Basic
 
+/-!
+# Notation and Conventions
+
+Documents the inner product and measure conventions used in the formalization of the
+restricted Weil quadratic form.
+
+* **Inner product**: The paper uses `⟨g, h⟩ = ∫ g(y) conj(h(y)) d*y` (conjugate-linear in h).
+  Mathlib's `inner` is conjugate-linear in the first argument, so
+  paper's `⟨g, h⟩ = ⟪h, g⟫_Mathlib = conj(⟪g, h⟫_Mathlib)`.
+  For real parts: `Re(paper's ⟨g,h⟩) = Re(⟪g, h⟫_Mathlib)`.
+* **Measure**: The multiplicative Haar measure `d*x = dx/x` on `ℝ₊*` is realized as
+  the pushforward of Lebesgue measure under `exp : ℝ → ℝ₊*`.
+-/
+
 namespace ConnesLean
 
 -- This file serves as documentation of conventions.

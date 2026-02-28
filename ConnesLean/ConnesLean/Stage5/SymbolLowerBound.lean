@@ -20,6 +20,18 @@ import ConnesLean.Stage5.FourierSymbol
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
+/-!
+# Fourier Symbol Lower Bounds
+
+Establishes lower bounds on the Fourier symbol:
+* `w(t) ≥ 1/(2t)` on `(0,1]` via hyperbolic inequalities (Lemma 10)
+* `ψ_λ(ξ) ≥ c₁ log|ξ| - c₂` for large `|ξ|` (Lemma 11, axiomatized)
+* `log(2+|ξ|) ≤ a + b · ψ_λ(ξ)` frequency moment control (Corollary 12, axiomatized)
+* `ψ_λ(ξ) → ∞` as `ξ → +∞`
+
+Reference: lamportform.tex, Section 7.2, lines 940–1057.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set Filter
