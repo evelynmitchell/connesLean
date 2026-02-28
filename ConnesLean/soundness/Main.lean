@@ -4,11 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 
 # Soundness Checks for ConnesLean
 
-Executable that verifies soundness properties of the formalization:
-1. Axiom audit: `#print axioms` for every main theorem, ensuring no unexpected
-   axiom leakage beyond the 10 declared project axioms + Lean/Mathlib builtins.
-2. Consistency check: confirm `False` is not derivable.
-3. Axiom inventory: list all project axioms with their locations.
+Executable that reports soundness properties of the formalization:
+1. Axiom audit: `#print axioms` for every main theorem at compile time.
+   CI separately greps build output for `sorryAx` to catch proof gaps.
+2. Sanity checks: compile tautologies and verify no `sorryAx` in their axiom sets.
+3. Axiom inventory: list all 10 declared project axioms.
 
 Run via `lake exe soundness_check`.
 -/
@@ -22,8 +22,8 @@ open ConnesLean
 These are the 10 project axioms (not proved, taken on trust).
 Any change to this list should be deliberate and reviewed. -/
 
-/-- Known project axioms. CI will fail if a main theorem depends on
-    an axiom not in this list (beyond Lean/Mathlib builtins). -/
+/-- Known project axioms (informational inventory for runtime reporting).
+    CI enforces no `sorryAx` via a separate grep on build output. -/
 def knownProjectAxioms : List Name :=
   [ `ConnesLean.translation_norm_sq_continuous
   , `ConnesLean.energyForm_eq_fourierSymbol_integral
@@ -42,7 +42,6 @@ def builtinAxioms : List Name :=
   [ `propext
   , `Quot.sound
   , `Classical.choice
-  , `sorryAx
   ]
 
 /-- Check that `sorryAx` does not appear in the axiom set. -/
@@ -122,28 +121,26 @@ section CompileTimeAxiomAudit
 
 end CompileTimeAxiomAudit
 
-/-! ## Consistency check
+/-! ## Compile-time sanity checks
 
-If our axioms are contradictory, we could derive `False`.
-This section verifies `¬False` is provable (trivially true, but
-the check ensures the environment hasn't been poisoned). -/
+These theorems are tautologies — they do NOT detect inconsistency
+(an inconsistent theory proves both `False` and `¬False`).
+Their purpose is to verify these definitions compile without `sorryAx`
+in their axiom sets, which `#print axioms` confirms in the build log. -/
 
-section ConsistencyCheck
+section SanityChecks
 
-/-- Sanity: `False` is not provable. -/
-theorem consistency_check : ¬False := fun h => h
+theorem sanity_not_false : ¬False := fun h => h
 
-/-- Sanity: `True` is provable. -/
-theorem consistency_check_true : True := trivial
+theorem sanity_true : True := trivial
 
-/-- Sanity: `0 ≠ 1` in `ℕ`. -/
-theorem consistency_check_nat : (0 : ℕ) ≠ 1 := Nat.zero_ne_one
+theorem sanity_zero_ne_one : (0 : ℕ) ≠ 1 := Nat.zero_ne_one
 
-#print axioms consistency_check
-#print axioms consistency_check_true
-#print axioms consistency_check_nat
+#print axioms sanity_not_false
+#print axioms sanity_true
+#print axioms sanity_zero_ne_one
 
-end ConsistencyCheck
+end SanityChecks
 
 /-! ## Runtime entry point -/
 
@@ -159,11 +156,10 @@ def main : IO UInt32 := do
     IO.println s!"   - {a}"
   IO.println ""
 
-  -- Section 2: Runtime consistency checks
-  IO.println "2. Runtime consistency checks:"
+  -- Section 2: Compile-time sanity checks
+  IO.println "2. Compile-time sanity checks (no sorryAx in axiom sets):"
   IO.println ""
 
-  -- Verify consistency_check compiled without sorries
   IO.println s!"   ¬False:  OK (compiled)"
   IO.println s!"   True:    OK (compiled)"
   IO.println s!"   0 ≠ 1:   OK (compiled)"

@@ -50,7 +50,7 @@ jobs:
         with:
           path: |
             ConnesLean/docbuild/.lake
-          key: ${{ runner.os }}-lake-docbuild-${{ hashFiles('ConnesLean/lean-toolchain', 'ConnesLean/docbuild/lakefile.toml') }}
+          key: ${{ runner.os }}-lake-docbuild-${{ hashFiles('ConnesLean/lean-toolchain', 'ConnesLean/docbuild/lean-toolchain', 'ConnesLean/docbuild/lakefile.toml') }}
           restore-keys: |
             ${{ runner.os }}-lake-docbuild-
 
