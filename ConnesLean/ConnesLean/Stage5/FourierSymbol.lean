@@ -24,6 +24,18 @@ import ConnesLean.Stage2.PrimeDistribution
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
+/-!
+# Fourier Symbol Definition and Basic Properties
+
+Defines the Fourier symbol `ψ_λ(ξ)` decomposing the energy form in Fourier space:
+* Archimedean part: `4 ∫₀^{2L} w(t) sin²(ξt/2) dt`
+* Prime part: `4 Σ_p Σ_m (log p) p^{-m/2} sin²(ξ · m · log(p) / 2)`
+
+Properties: nonnegativity, evenness (from sin²), and vanishing at zero.
+
+Reference: lamportform.tex, Section 7.2, lines 783–842.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set Finset

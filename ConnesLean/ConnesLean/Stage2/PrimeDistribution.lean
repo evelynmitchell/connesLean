@@ -18,6 +18,17 @@ import ConnesLean.Stage1.ConvolutionInnerProduct
 import ConnesLean.Stage1.UnitaryIdentity
 import Mathlib.Data.Nat.Prime.Defs
 
+/-!
+# Prime Distribution and Energy Decomposition
+
+Defines prime-indexed bounds, the prime constant `c_p(λ)`, and structures for prime
+energy terms. For each prime `p`, the local distribution is
+`W_p(f) = (log p) Σ_{m ≥ 1} p^{-m/2} (f(p^m) + f(p^{-m}))`,
+and `-W_p(f)` decomposes into translation norms plus a correction term.
+
+Reference: lamportform.tex, Section 2, equation (2).
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Finset

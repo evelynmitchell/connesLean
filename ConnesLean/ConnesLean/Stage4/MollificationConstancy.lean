@@ -23,10 +23,22 @@ The key steps:
 
 import ConnesLean.Stage4.TranslationInvariance
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+
 import Mathlib.MeasureTheory.Group.Measure
 import Mathlib.Algebra.Order.Floor.Defs
 import Mathlib.MeasureTheory.Covering.DensityTheorem
 import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
+
+/-!
+# Mollification and Constancy of Translation-Invariant Indicators
+
+Proves that if `1_B` is ae translation-invariant on an open interval `I`, its
+rectangular local average is constant on compact subintervals. Uses forward shift
+of ae properties, change of variables for local averages, and telescoping iteration
+via `Nat.floor` step counting.
+
+Reference: lamportform.tex, Section 6, Lemma 6, Steps 4–5 (lines 577–599).
+-/
 
 namespace ConnesLean
 

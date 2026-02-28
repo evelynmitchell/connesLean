@@ -23,6 +23,16 @@ by combining the Kato structure with the compact embedding D(E_λ) ↪ L²(I)
 
 import ConnesLean.Stage5.CompactEmbedding
 
+/-!
+# Compact Resolvent for the Kato Operator A_λ
+
+The closed energy form E_λ gives rise to a self-adjoint operator A_λ ≥ 0 via the
+Kato representation theorem. Proves A_λ has compact resolvent by combining the
+Kato structure with the compact embedding D(E_λ) ↪ L²(I).
+
+Reference: lamportform.tex, Theorem 9 (lines 1159–1209).
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set Filter

@@ -18,6 +18,17 @@ import ConnesLean.Stage2.TranslationOperator
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
+/-!
+# Log Coordinates: L² Isometry between ℝ₊* and ℝ
+
+Establishes the L² isometry between `(ℝ₊*, d*x)` and `(ℝ, du)` via logarithmic
+coordinates. For `g : ℝ₊* → ℂ` supported on `[λ⁻¹, λ]`, defines `G = g ∘ exp`
+supported on `(-log λ, log λ)` with `‖g‖²_{L²(d*x)} = ‖G‖²_{L²(du)}`.
+Defines `zeroExtend` using `Set.indicator`.
+
+Reference: lamportform.tex, Section 2.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set

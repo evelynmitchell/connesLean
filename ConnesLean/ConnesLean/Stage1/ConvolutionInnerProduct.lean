@@ -23,6 +23,18 @@ import ConnesLean.Stage1.DilationOperator
 import ConnesLean.Stage1.Convolution
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
+/-!
+# Lemma 1: Convolution Inner-Product Identity
+
+Proves the four parts of Lemma 1 for `f = g ⋆ g*`:
+1. `f(a) = ⟨g, U_a g⟩` — convolution equals inner product with dilation
+2. `f(a⁻¹) = conj(f(a))` — conjugate symmetry
+3. `f(a) + f(a⁻¹) = 2 Re⟨g, U_a g⟩` — sum equals twice the real part
+4. `f(1) = ‖g‖²` — norm at unity
+
+Reference: lamportform.tex, Lemma 1.1 (`lem:f-inner`), lines 122–163.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Complex

@@ -16,6 +16,16 @@ and bridge lemmas connecting real-valued indicators to the ℂ-typed
 
 import ConnesLean.Stage2.LogCoordinates
 
+/-!
+# Normal Contractions and Real-to-Complex Bridge
+
+Defines normal contractions (1-Lipschitz maps with `Φ(0) = 0`) and the `liftReal`
+embedding `ℝ → ℂ`. Provides bridge lemmas connecting real-valued indicator functions
+to the ℂ-typed `zeroExtend`/`energyForm` API.
+
+Reference: lamportform.tex, Section 5, lines 476–479.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set

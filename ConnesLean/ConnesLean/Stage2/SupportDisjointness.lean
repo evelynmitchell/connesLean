@@ -17,6 +17,16 @@ import ConnesLean.Stage2.LogCoordinates
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 
+/-!
+# Support Disjointness and Orthogonality
+
+When `t > 2L`, the intervals `(-L, L)` and `(-L + t, L + t)` are disjoint, so
+`zeroExtend G I` and `S_t(zeroExtend G I)` have disjoint support. This gives the
+Pythagorean identity `‖G̃ - S_t G̃‖² = 2‖G‖²` which saturates the unitary identity bound.
+
+Reference: lamportform.tex, Section 2, Remark 2.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Set

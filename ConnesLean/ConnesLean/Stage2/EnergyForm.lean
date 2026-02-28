@@ -23,6 +23,17 @@ Key properties:
 import ConnesLean.Stage2.ArchimedeanDistribution
 import ConnesLean.Stage2.PrimeDistribution
 
+/-!
+# Energy Form E_λ(G) — Definition 3.1
+
+Assembles the difference-energy form from archimedean and prime contributions:
+  `E_λ(G) = ∫₀^{2L} w(t) ‖G̃ - S_t G̃‖² dt + Σ_p Σ_m (log p) p^{-m/2} ‖G̃ - S_{m log p} G̃‖²`
+
+Key properties: `E_λ(G) ≥ 0`, `c_p(λ) ≤ 0` for each prime, `E_λ(0) = 0`.
+
+Reference: lamportform.tex, Definition 3.1, lines 435–470.
+-/
+
 namespace ConnesLean
 
 open MeasureTheory Real Finset Set
