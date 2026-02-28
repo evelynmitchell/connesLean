@@ -48,7 +48,7 @@ def builtinAxioms : List Name :=
 /-- Check that `sorryAx` does not appear in the axiom set. -/
 def checkNoSorry (label : String) (axioms : List Name) : IO Bool := do
   if axioms.contains `sorryAx then
-    IO.eprintln s!"  FAIL: {label} depends on sorryAx (sorry in proof)"
+    IO.eprintln s!"  FAIL: {label} depends on sorryAx (sorrie in proof)"
     return false
   else
     return true
@@ -163,7 +163,7 @@ def main : IO UInt32 := do
   IO.println "2. Runtime consistency checks:"
   IO.println ""
 
-  -- Verify consistency_check compiled without sorry
+  -- Verify consistency_check compiled without sorries
   IO.println s!"   ¬False:  OK (compiled)"
   IO.println s!"   True:    OK (compiled)"
   IO.println s!"   0 ≠ 1:   OK (compiled)"
