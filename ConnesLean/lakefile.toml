@@ -30,6 +30,14 @@ globs = ["ConnesLeanTest"]
 name = "lspec"
 globs = ["lspec"]
 
+[[lean_lib]]
+name = "soundness"
+globs = ["soundness"]
+
 [[lean_exe]]
 name = "connes_lspec"
 root = "lspec.Main"
+
+[[lean_exe]]
+name = "soundness_check"
+root = "soundness.Main"
