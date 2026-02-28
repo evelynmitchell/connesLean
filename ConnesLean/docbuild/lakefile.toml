@@ -11,4 +11,4 @@ path = ".."
 [[require]]
 name = "«doc-gen4»"
 scope = "leanprover"
-rev = "main"
+rev = "a41d5ebebfa77afe737fec8de8ad03fc8b08fdff"
