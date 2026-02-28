@@ -66,18 +66,9 @@ jobs:
         env:
           MATHLIB_NO_CACHE_ON_UPDATE: 1
         run: |
-          # lake resolve-deps fails in docbuild context due to stale manifest
-          # vs transitive dep conflicts. Use lake update to freshly resolve
-          # all deps from lakefiles (mathlib stays at v4.28.0 per ConnesLean's
-          # lakefile pin).
-          lake update
-
-      - name: Fetch mathlib cache for docbuild
-        working-directory: ConnesLean/docbuild
-        # cache get may fail in docbuild context since mathlib is inherited
-        # via path dependency; the main library step already has the oleans
-        continue-on-error: true
-        run: lake exe cache get
+          # Only update doc-gen4 and its deps; shared deps (mathlib etc.)
+          # come from the parent project via packagesDir = "../.lake/packages"
+          lake update «doc-gen4»
 
       - name: Build documentation
         working-directory: ConnesLean/docbuild

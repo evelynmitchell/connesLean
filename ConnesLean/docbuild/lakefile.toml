@@ -1,6 +1,8 @@
 name = "docbuild"
+reservoir = false
 version = "0.1.0"
 keywords = ["documentation"]
+packagesDir = "../.lake/packages"
 
 # Reference the parent ConnesLean library
 [[require]]
