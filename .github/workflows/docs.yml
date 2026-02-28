@@ -50,7 +50,7 @@ jobs:
         with:
           path: |
             ConnesLean/docbuild/.lake
-          key: ${{ runner.os }}-lake-docbuild-${{ hashFiles('ConnesLean/lean-toolchain', 'ConnesLean/docbuild/lean-toolchain', 'ConnesLean/docbuild/lakefile.toml') }}
+          key: ${{ runner.os }}-lake-docbuild-${{ hashFiles('ConnesLean/lean-toolchain', 'ConnesLean/docbuild/lean-toolchain', 'ConnesLean/docbuild/lakefile.toml', 'ConnesLean/docbuild/lake-manifest.json') }}
           restore-keys: |
             ${{ runner.os }}-lake-docbuild-
 
@@ -66,7 +66,6 @@ jobs:
         env:
           MATHLIB_NO_CACHE_ON_UPDATE: 1
         run: |
-          lake update doc-gen4
           lake build ConnesLean:docs
 
       - name: Copy static docs
