@@ -182,7 +182,7 @@ theorem archEnergyIntegrand_indicator_ae_eq {cutoffLambda : ℝ}
 /-- The inner L² translation integral: `∫ ‖φ̃(u) - S_t φ̃(u)‖₊² du`
     where `φ̃ = zeroExtend G I`. This is the second factor of
     `archEnergyIntegrand G L t = weight(t) * innerIntegral G L t`. -/
-private def innerIntegral (G : ℝ → ℂ) (L : ℝ) (t : ℝ) : ENNReal :=
+def innerIntegral (G : ℝ → ℂ) (L : ℝ) (t : ℝ) : ENNReal :=
   ∫⁻ u, ‖zeroExtend G (logInterval L) u -
     translationOp t (zeroExtend G (logInterval L)) u‖₊ ^ (2 : ℝ) ∂volume
 
