@@ -13,10 +13,10 @@ MAX_LOOKBACK=40
 ERRORS=0
 
 # Collect all axiom declarations (file:line:content)
+# Match axioms at line start, possibly preceded by whitespace or attributes.
 mapfile -t AXIOM_LINES < <(
-  grep -rn '^axiom ' "$LEAN_DIR" --include='*.lean' \
-    | grep -v '\.lake/' \
-    | grep -v '/soundness/'
+  grep -rn '^\s*axiom ' "$LEAN_DIR" --include='*.lean' \
+    --exclude-dir='.lake' --exclude-dir='soundness'
 )
 
 if [ ${#AXIOM_LINES[@]} -eq 0 ]; then
@@ -28,27 +28,38 @@ echo "=== Axiom Soundness Lint ==="
 echo "Found ${#AXIOM_LINES[@]} axiom declaration(s)."
 echo ""
 
+# Lean declaration keywords used as backward-scan boundaries
+DECL_BOUNDARY='^(axiom |theorem |def |lemma |instance |abbrev |structure |class |noncomputable |private |protected )'
+
 # ── Check 1 & 2: Soundness annotation and docstring presence ──
 for entry in "${AXIOM_LINES[@]}"; do
   FILE="$(echo "$entry" | cut -d: -f1)"
   LINE_NUM="$(echo "$entry" | cut -d: -f2)"
   AXIOM_TEXT="$(echo "$entry" | cut -d: -f3-)"
-  # Extract name: strip "axiom " prefix, then take first word
-  AXIOM_NAME="${AXIOM_TEXT#axiom }"
+  # Extract name: strip leading whitespace and "axiom " prefix, then take first word
+  AXIOM_NAME="${AXIOM_TEXT#"${AXIOM_TEXT%%[![:space:]]*}"}"
+  AXIOM_NAME="${AXIOM_NAME#axiom }"
   AXIOM_NAME="${AXIOM_NAME%% *}"
   AXIOM_NAME="${AXIOM_NAME%%(*}"
 
   HAS_SOUNDNESS=false
   HAS_DOCSTRING=false
+  IN_DOCSTRING=false
   START=$((LINE_NUM - MAX_LOOKBACK))
   [ "$START" -lt 1 ] && START=1
 
-  # Scan backwards from the line before the axiom
+  # Scan backwards from the line before the axiom.
+  # Only count **Soundness:** markers found inside the docstring (after seeing -/).
   for (( i = LINE_NUM - 1; i >= START; i-- )); do
     SCAN_LINE="$(sed -n "${i}p" "$FILE")"
 
-    # Check for **Soundness:** marker
-    if echo "$SCAN_LINE" | grep -q '\*\*Soundness:\*\*'; then
+    # Entering the docstring from its closing end
+    if ! $IN_DOCSTRING && echo "$SCAN_LINE" | grep -q '\-/'; then
+      IN_DOCSTRING=true
+    fi
+
+    # Check for **Soundness:** marker — only if inside the docstring
+    if $IN_DOCSTRING && echo "$SCAN_LINE" | grep -q '\*\*Soundness:\*\*'; then
       HAS_SOUNDNESS=true
     fi
 
@@ -58,19 +69,9 @@ for entry in "${AXIOM_LINES[@]}"; do
       break
     fi
 
-    # Stop at previous declaration boundary
-    if echo "$SCAN_LINE" | grep -qE '^(axiom |theorem |def |structure |class )'; then
+    # Stop at previous declaration boundary (only before entering docstring)
+    if ! $IN_DOCSTRING && echo "$SCAN_LINE" | grep -qE "$DECL_BOUNDARY"; then
       break
-    fi
-
-    # Stop at closing of a different docstring (not ours)
-    if echo "$SCAN_LINE" | grep -q '\-/' && [ "$i" -ne "$((LINE_NUM - 1))" ]; then
-      # Only break if this -/ is NOT part of the docstring that ends just before our axiom
-      # Check if this is a standalone -/ that closes an earlier block
-      NEXT_LINE="$(sed -n "$((i + 1))p" "$FILE")"
-      if ! echo "$NEXT_LINE" | grep -qE '^\s*$|^axiom '; then
-        break
-      fi
     fi
   done
 
@@ -96,7 +97,8 @@ echo "--- Inventory sync ---"
 mapfile -t SOURCE_AXIOMS < <(
   for entry in "${AXIOM_LINES[@]}"; do
     TEXT="$(echo "$entry" | cut -d: -f3-)"
-    NAME="${TEXT#axiom }"
+    NAME="${TEXT#"${TEXT%%[![:space:]]*}"}"
+    NAME="${NAME#axiom }"
     NAME="${NAME%% *}"
     NAME="${NAME%%(*}"
     echo "$NAME"
