@@ -2,7 +2,7 @@
 Copyright (c) 2026 Christopher Long. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 
-# Invariance Split — Lemma 14
+# Energy Form Split — Lemma 14
 
 Reference: lamportform.tex, Lemma 14 (lines 1220–1310).
 
@@ -14,14 +14,14 @@ G ∈ D(E_λ).
 
 - `EnergyFormSplit`: structure packaging a measurable B ⊆ I with the energy
   splitting property E_λ(G) = E_λ(1_B · G) + E_λ(1_{I\B} · G)
-- `invariance_domain_preserved`: indicator projections preserve form domain
-- `invariance_split`: main Lemma 14 — domain preservation + energy splitting
+- `EnergyFormSplit.domain_preserved`: indicator projections preserve form domain
+- `EnergyFormSplit.split`: main Lemma 14 — domain preservation + energy splitting
 -/
 
 import ConnesLean.Stage5.CompactResolvent
 
 /-!
-# Invariance Split — Lemma 14
+# Energy Form Split — Lemma 14
 
 Packages the energy form splitting property for Lemma 14.
 
@@ -84,7 +84,7 @@ structure EnergyFormSplit (cutoffLambda : ℝ) where
     and finiteness of `E_λ(G)`, both summands must be finite in `ENNReal`.
 
     Reference: lamportform.tex, Lemma 14, Step 5 (lines 1280–1295). -/
-theorem invariance_domain_preserved {cutoffLambda : ℝ}
+theorem EnergyFormSplit.domain_preserved {cutoffLambda : ℝ}
     (inv : EnergyFormSplit cutoffLambda)
     (G : ℝ → ℂ) (hG : G ∈ formDomain cutoffLambda) :
     inv.B.indicator G ∈ formDomain cutoffLambda ∧
@@ -96,14 +96,14 @@ theorem invariance_domain_preserved {cutoffLambda : ℝ}
   have h_both := ENNReal.add_ne_top.mp hG_fin
   exact ⟨h_both.1, h_both.2⟩
 
-/-- **Lemma 14 (Invariance Split):** If the energy form splits across B,
+/-- **Lemma 14 (Energy Form Split):** If the energy form splits across B,
     then for every G ∈ D(E_λ):
     1. 1_B · G ∈ D(E_λ)
     2. 1_{I\B} · G ∈ D(E_λ)
     3. E_λ(G) = E_λ(1_B · G) + E_λ(1_{I\B} · G)
 
     Reference: lamportform.tex, Lemma 14 (lines 1220–1310). -/
-theorem invariance_split {cutoffLambda : ℝ}
+theorem EnergyFormSplit.split {cutoffLambda : ℝ}
     (inv : EnergyFormSplit cutoffLambda)
     (G : ℝ → ℂ) (hG : G ∈ formDomain cutoffLambda) :
     inv.B.indicator G ∈ formDomain cutoffLambda ∧
@@ -113,7 +113,7 @@ theorem invariance_split {cutoffLambda : ℝ}
       energyForm cutoffLambda (inv.B.indicator G) +
       energyForm cutoffLambda
         ((logInterval (Real.log cutoffLambda) \ inv.B).indicator G) := by
-  have h_dom := invariance_domain_preserved inv G hG
+  have h_dom := inv.domain_preserved G hG
   exact ⟨h_dom.1, h_dom.2, inv.energy_split G hG⟩
 
 /-! ## Soundness tests
