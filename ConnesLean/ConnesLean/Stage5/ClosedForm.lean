@@ -83,7 +83,10 @@ structure IsClosedEnergyForm (cutoffLambda : ℝ) : Prop where
     integration order (Fubini), and recognize `fourierSymbol`.
 
     **Why axiom:** Requires Plancherel theorem (not in Mathlib) and
-    Fubini interchange for the double integral. -/
+    Fubini interchange for the double integral.
+
+    **Soundness:** Preconditions are `1 < cutoffLambda` and `G ∈ formDomain`,
+    matching Lemma 9's hypotheses. No structure parameters. -/
 axiom energyForm_eq_fourierSymbol_integral (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda)
     (G : ℝ → ℂ) (hG : G ∈ formDomain cutoffLambda) :
     (energyForm cutoffLambda G).toReal =
@@ -99,7 +102,10 @@ axiom energyForm_eq_fourierSymbol_integral (cutoffLambda : ℝ) (hLam : 1 < cuto
     and (2) `∫ ψ_λ(ξ) ‖Ĝ(ξ)‖₊² dξ < ∞` (weighted Fourier integrability).
     By Plancherel, condition (1) is equivalent to `G ∈ L²`.
 
-    **Why axiom:** Depends on the Fourier representation axiom. -/
+    **Why axiom:** Depends on the Fourier representation axiom.
+
+    **Soundness:** Preconditions are `1 < cutoffLambda` and a bare function `G`.
+    The biconditional matches Proposition 6, Step 2. No structure parameters. -/
 axiom formDomain_eq_weighted_fourier (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda)
     (G : ℝ → ℂ) :
     G ∈ formDomain cutoffLambda ↔
@@ -122,7 +128,11 @@ axiom formDomain_eq_weighted_fourier (cutoffLambda : ℝ) (hLam : 1 < cutoffLamb
 
     **Why axiom:** `smooth_in_domain` needs the MVT translation estimate plus
     integrability of w(t)t². `graph_complete` needs weighted L² completeness
-    via Fourier isometry. Both depend on Plancherel. -/
+    via Fourier isometry. Both depend on Plancherel.
+
+    **Soundness:** Sole precondition is `1 < cutoffLambda`, matching
+    Proposition 6. The conclusion is an `IsClosedEnergyForm` structure whose
+    fields encode the four Kato closedness properties. No structure parameters. -/
 axiom energyForm_closed_on_line (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda) :
     IsClosedEnergyForm cutoffLambda
 
@@ -139,7 +149,11 @@ axiom energyForm_closed_on_line (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda) :
     Proposition 6 (closedness on ℝ) gives G ∈ D(E_λ).
 
     **Why axiom:** Needs H_I closed in L²(ℝ) + Proposition 6. Standard but
-    requires ~80 lines of L² machinery. -/
+    requires ~80 lines of L² machinery.
+
+    **Soundness:** Preconditions are `1 < cutoffLambda` plus support, domain
+    membership, L² convergence, and energy-Cauchy conditions on the sequence —
+    matching Proposition 7's hypotheses. No structure parameters. -/
 axiom energyForm_closed_on_interval (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda) :
     ∀ (Gn : ℕ → ℝ → ℂ) (G : ℝ → ℂ),
     let L := Real.log cutoffLambda

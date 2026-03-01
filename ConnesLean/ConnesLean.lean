@@ -23,3 +23,4 @@ import ConnesLean.Stage5.CompactEmbedding
 import ConnesLean.Stage5.CompactResolvent
 import ConnesLean.Stage6.IndicatorEnergy
 import ConnesLean.Stage6.EnergyPositivity
+import ConnesLean.Stage6.InvarianceSplit

@@ -154,7 +154,11 @@ theorem archWeight_ge_inv_two_t {t : ℝ} (ht : 0 < t) (ht1 : t ≤ 1) :
 
     **Why axiom:** All building blocks exist in Mathlib (`integral_sin_sq`,
     `log_le_harmonic_floor`, substitution lemmas) but assembly requires 150+ lines
-    of integral manipulation. -/
+    of integral manipulation.
+
+    **Soundness:** Sole precondition is `1 < cutoffLambda`, matching Lemma 11.
+    The existential conclusion (∃ c₁ c₂ ξ₀) cannot be vacuously satisfied.
+    No structure parameters. -/
 axiom fourierSymbol_ge_log (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda) :
     ∃ c₁ c₂ : ℝ, 0 < c₁ ∧ ∃ ξ₀ : ℝ, 2 ≤ ξ₀ ∧
       ∀ ξ : ℝ, ξ₀ ≤ |ξ| → c₁ * Real.log |ξ| - c₂ ≤ fourierSymbol cutoffLambda ξ
@@ -171,7 +175,11 @@ axiom fourierSymbol_ge_log (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda) :
     - Set `b = 1/c₁`, `a = c₂/c₁ + log 3 + log(2+ξ₀)`.
 
     The integral version (multiplying by `|φ̂(ξ)|²` and integrating) is deferred
-    to the Fourier representation PR. -/
+    to the Fourier representation PR.
+
+    **Soundness:** Sole precondition is `1 < cutoffLambda`, matching
+    Corollary 12. The existential conclusion (∃ a b with positivity) cannot
+    be vacuously satisfied. No structure parameters. -/
 axiom frequency_moment_control (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda) :
     ∃ a b : ℝ, 0 < a ∧ 0 < b ∧
       ∀ ξ : ℝ, Real.log (2 + |ξ|) ≤ a + b * fourierSymbol cutoffLambda ξ
