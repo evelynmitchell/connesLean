@@ -142,6 +142,13 @@
 
 ## Axiom design
 - Weakest hypotheses needed (closest to actual theorem) — opposite to theorems where stronger conclusions are better
+- Every axiom needs a `**Soundness:**` annotation (enforced by `scripts/lint_axiom_soundness.sh`)
+
+## ENNReal: proving a + b ≤ 0 forces both zero
+- `∫⁻ u, ‖(0 : ℝ → ℂ) u‖₊ ^ (2 : ℝ)` does NOT simplify to 0 via the usual simp lemmas
+- Fix: `have h_rhs : (∫⁻ u, ‖(0 : ℝ → ℂ) u‖₊ ^ (2 : ℝ)) = 0 := by simp` then `rw [h_rhs] at h`
+- For `a + b ≤ 0` in ENNReal: `le_antisymm (le_trans le_self_add h) (zero_le _)` gives `a = 0`
+- For the other summand: `le_antisymm (le_trans le_add_self h) (zero_le _)` gives `b = 0`
 
 ## Nat.floor for telescoping
 - `Nat.floor_le (h : 0 ≤ x) : ↑⌊x⌋₊ ≤ x`; `Nat.lt_floor_add_one x : x < ↑⌊x⌋₊ + 1`
@@ -155,7 +162,8 @@
 - For ENNReal coercions: `↑(x.toNNReal) = ENNReal.ofReal x` holds by `rfl`, so `change` can switch
 
 ## ENNReal rpow patterns
-- **Pre-compute rpow facts**: Declare `h_zero_rpow : (0:ENNReal) ^ (2:ℝ) = 0 := ENNReal.zero_rpow_of_pos ...` and `h_one_rpow : (1:ENNReal) ^ (2:ℝ) = 1 := ENNReal.one_rpow _` up front, feed to `simp only`. Avoids `simp`/`norm_num` failures on ENNReal rpow.
+- **`simp` handles {0,1} ENNReal rpow automatically**: For indicator case analysis where values are in {0,1}, `simp` with indicator membership lemmas closes goals without needing explicit `rpow_two_zero`/`rpow_two_one` helpers. The rpow helpers are still useful for `simp only` or manual `rw` chains.
+- **Pre-compute rpow facts** (when `simp` can't reach): `h_zero_rpow : (0:ENNReal) ^ (2:ℝ) = 0 := ENNReal.zero_rpow_of_pos ...` and `h_one_rpow : (1:ENNReal) ^ (2:ℝ) = 1 := ENNReal.one_rpow _`.
 - **`ENNReal.rpow_eq_zero_iff`** (bidirectional): `x ^ y = 0 ↔ (x = 0 ∧ 0 < y) ∨ (x = ⊤ ∧ y < 0)`. Use this instead of constructing positivity proofs for rpow. `norm_num` dispatches the impossible ⊤ branch.
 - **`ENNReal.rpow_le_rpow`**: `a ≤ b → 0 ≤ r → a ^ r ≤ b ^ r`. Useful for monotone bounds.
 - **Always use `NNReal` / `ENNReal`** in type signatures, never `ℝ≥0` / `ℝ≥0∞`. The notation is 3 tokens (`ℝ`, `≥`, `0`) and will misparse without the right `open scoped`. The spelled-out name is unambiguous.
@@ -171,3 +179,66 @@
 ## lintegral_eq_zero_iff with restricted measures
 - `lintegral_eq_zero_iff (hf : Measurable f) : ∫⁻ a, f a ∂μ = 0 ↔ f =ᵐ[μ] 0`
 - Works with any measure including `volume.restrict S` — no `.restrict` suffix needed on measurability
+
+## ae-equality through measure-preserving translations
+- `h_ae.comp_tendsto (measurePreserving_sub_const t).quasiMeasurePreserving.tendsto_ae`
+- Gives: if `φ =ᵐ[volume] ψ` then `(fun u => φ (u - t)) =ᵐ[volume] (fun u => ψ (u - t))`
+- Reusable for propagating ae-equality through energy form integrands
+
+## Restricted lintegral positivity
+- `lintegral_pos_iff_support h_meas` works on restricted measure (set integral form)
+- To show `0 < (volume.restrict S)(support f)`, use:
+  `Measure.le_restrict_apply _ _` which gives `volume(support f ∩ S) ≤ (volume.restrict S)(support f)`
+- Chain: show `S ⊆ support f`, then `volume(S ∩ S) = volume(S) ≤ volume(support f ∩ S) ≤ restricted measure`
+
+## ENNReal.mul_pos expects ≠ 0 arguments
+- `ENNReal.mul_pos (ha : a ≠ 0) (hb : b ≠ 0) : 0 < a * b`
+- Convert from `0 < x` via `ne_of_gt`: `ENNReal.coe_ne_zero.mpr (ne_of_gt ...)`
+
+## Chained dot notation in Lean 4
+- `.foo.bar.baz` can fail if `bar.baz` isn't atomic — explicit form is safer
+- BUT pipe `|>.nnnorm.coe_nnreal_ennreal.pow_const _` works reliably
+- Use `|>` to break the chain when direct dot notation misbehaves
+
+## ENNReal rpow vs npow in lintegral
+- In `∫⁻ u, ‖...‖₊ ^ (2 : ℝ)`, `‖...‖₊ : NNReal`, `^ (2:ℝ)` is NNReal.rpow, then coerced to ENNReal
+- After `simp` or `set`, Lean may convert `^ (2:ℝ)` to `^ (2:ℕ)` (npow) in the goal
+- Both are equal, but helper lemmas must match the goal type — check with `lean_goal`
+- `by_cases` on set membership + `simp [indicator_of_mem, indicator_of_notMem]` handles both forms
+
+## ENNReal finiteness for bounded integrals
+- `inner_integral_one_lt_top` pattern: bound integrand by sum of indicators of I and (shift ⁻¹' I)
+- `lintegral_add_right` splits the integral, `lintegral_indicator_one` converts to measure
+- `measurePreserving_sub_const` shows preimage of I under shift has same measure as I
+- `ENNReal.add_lt_top.mpr ⟨h1, h2⟩` for proving sum of two finite things is finite
+- `ENNReal.mul_lt_top` for product; `ENNReal.coe_lt_top` for NNReal coercion
+- `ENNReal.sum_lt_top.mpr` for finite sum: prove each summand `< ⊤`
+
+## lintegral_mono is measure-agnostic
+- `lintegral_mono (fun a => h a)` works for restricted integrals (`∫⁻ t in S, ...`)
+- No need for `setLIntegral_mono_ae` when the pointwise bound holds everywhere (not just a.e.)
+- `setLIntegral_mono_ae` requires `AEMeasurable` of upper bound; `lintegral_mono` doesn't
+
+## lintegral_add_left takes Measurable, not AEMeasurable
+- `lintegral_add_left (hf : Measurable f) g : ∫⁻ a, f a + g a ∂μ = ∫⁻ a, f a ∂μ + ∫⁻ a, g a ∂μ`
+- Works with restricted measure automatically (no `.aemeasurable.restrict` needed)
+- Common mistake: passing `hf.aemeasurable` or `hf.aemeasurable.restrict` — just pass `hf`
+
+## Weighted ENNReal inequality pattern
+- For `w * a ≤ w * b₁ + w * b₂` from `a ≤ b₁ + b₂`:
+  ```
+  calc _ ≤ _ * (_ + _) := mul_le_mul' le_rfl h
+    _ = _ + _ := mul_add _ _ _
+  ```
+- `mul_le_mul' le_rfl h` is the non-deprecated way (avoids `mul_le_mul_left'`)
+- Two lines, works for both archEnergyIntegrand and primeEnergyTerm
+
+## add_add_add_comm for energy form rearrangement
+- `add_add_add_comm a b c d : (a + b) + (c + d) = (a + c) + (b + d)`
+- Use after `add_le_add h_arch h_prime` to rearrange from (arch_B + arch_D) + (prime_B + prime_D)
+  to (arch_B + prime_B) + (arch_D + prime_D) = E(B) + E(D)
+
+## Indicator case analysis: include ALL membership facts in simp
+- For `I.indicator`, `B.indicator`, `(I\B).indicator`: include simp lemmas for EVERY set
+- Common mistake: forgetting `Set.indicator_of_notMem hvt_diff` for `(I\B).indicator` at points not in `I\B`
+- Derived memberships (e.g., `u ∉ I \ B` from `u ∉ I`) must be established as `have` and included

@@ -127,12 +127,15 @@ formalized.
 
 ### Section 7.3 — Semigroup and irreducibility (lines 1212–1461)
 
-| Paper result | Lines | Status |
-|---|---|---|
-| Definition: Irreducibility for semigroups | 1215–1218 | **not yet** |
-| Lemma 14: Invariant ideals split the form | 1220–1310 | **not yet** |
-| Proposition 9: Triviality of invariant ideals | 1312–1440 | **not yet** |
-| Corollary 13: Irreducibility for E_λ | 1442–1461 | **not yet** |
+| Paper result | Lines | Lean file | Lean name | Status |
+|---|---|---|---|---|
+| Definition: Irreducibility for semigroups | 1215–1218 | — | — | **not yet** |
+| Lemma 14: Energy form splitting | 1220–1310 | `Stage6/InvarianceSplit.lean` | `EnergyFormSplit`, `EnergyFormSplit.split` | proved (structure assumes splitting) |
+| Remark 4: Energy positivity E_λ(1) > 0 | 698–723 | `Stage6/EnergyPositivity.lean` | `energyForm_one_pos`, `energyForm_indicator_null` | proved |
+| Prop 10 Steps 1–3: 1 ∈ D(E_λ) | 1312–1370 | `Stage6/ConstantInDomain.lean` | `constant_in_formDomain`, `splitting_applied_to_constant` | proved |
+| Prop 10 Steps 4–7: Norm inequality | 1371–1390 | `Stage6/NormInequality.lean` | `nnnorm_sq_indicator_ge`, `energyForm_indicator_add_ge` | proved |
+| Prop 10 Steps 8–9: Cross-term vanishing | 1391–1440 | — | — | **not yet** (Issue #75, #76) |
+| Corollary 13: Irreducibility for E_λ | 1442–1461 | — | — | **not yet** (Issue #77) |
 
 ### Section 8 — Positivity improving and ground state (lines 1463–1558)
 
@@ -178,6 +181,10 @@ formalized.
 | `Stage5/CompactEmbedding.lean` | §7.2 Thm KR, Lemma 13, Prop 8 | `formNormBall`, compactness (**2 axioms**) |
 | `Stage5/CompactResolvent.lean` | §7.2 Thm 9 | `KatoOperator`, compact resolvent (**1 axiom**) |
 | `Stage6/IndicatorEnergy.lean` | §7.1 Lemma 7 | `energyForm_indicator_null_or_conull` |
+| `Stage6/EnergyPositivity.lean` | §7.1 Remark 4 | `energyForm_one_pos`, `energyForm_indicator_null` |
+| `Stage6/InvarianceSplit.lean` | §7.3 Lemma 14 | `EnergyFormSplit`, `EnergyFormSplit.split` |
+| `Stage6/ConstantInDomain.lean` | §7.3 Prop 10 Steps 1–3 | `constant_in_formDomain`, `splitting_applied_to_constant` |
+| `Stage6/NormInequality.lean` | §7.3 Prop 10 Steps 4–7 | `nnnorm_sq_indicator_ge`, `energyForm_indicator_add_ge` |
 
 ---
 

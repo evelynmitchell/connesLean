@@ -15,6 +15,12 @@
 - Catches both `ℝ≥0` and `ℝ≥0∞` (substring match)
 - Use `NNReal` / `ENNReal` names instead — the notation parses as 3+ tokens (ℝ, ≥, 0)
 
+## Axiom soundness lint (PR #92)
+- CI step: `bash ../scripts/lint_axiom_soundness.sh` (runs from `ConnesLean/` directory)
+- 3 checks: `**Soundness:**` annotation, `/--` docstring, inventory sync with `soundness/Main.lean`
+- Scans `^\s*axiom ` with `--exclude-dir='.lake' --exclude-dir='soundness'`
+- 7 executable cross-checks in `ConnesLeanTest/SoundnessTests.lean`
+
 ## Lake build commands
 - All lake commands must run from `ConnesLean/` directory
 - `lake build ConnesLean` — build the library
