@@ -75,7 +75,7 @@ theorem inner_integral_one_le {L t : ℝ} (_hL : 0 < L) (ht : 0 < t)
       simp [φ, zeroExtend_apply_nmem hu_I, zeroExtend_apply_nmem hut]
   -- Main bound: integrand ≤ indicator of S, then bound measure of S
   apply le_trans (lintegral_mono fun u => ?_)
-  · calc ∫⁻ u, S.indicator (fun _ => (1 : ℝ≥0∞)) u ∂volume
+  · calc ∫⁻ u, S.indicator (fun _ => (1 : ENNReal)) u ∂volume
         = volume S := lintegral_indicator_one hS_meas
       _ ≤ volume (Icc (-L) (-L + t)) + volume (Icc L (L + t)) :=
           measure_union_le _ _
@@ -144,8 +144,8 @@ theorem inner_integral_one_lt_top (L shift : ℝ) :
   calc ∫⁻ u, ‖zeroExtend (1 : ℝ → ℂ) I u -
           translationOp shift (zeroExtend (1 : ℝ → ℂ) I) u‖₊
             ^ (2 : ℝ) ∂volume
-      ≤ ∫⁻ u, I.indicator (fun _ => (1 : ℝ≥0∞)) u +
-          J.indicator (fun _ => (1 : ℝ≥0∞)) u ∂volume := by
+      ≤ ∫⁻ u, I.indicator (fun _ => (1 : ENNReal)) u +
+          J.indicator (fun _ => (1 : ENNReal)) u ∂volume := by
         apply lintegral_mono; intro u; simp only [translationOp_apply]
         by_cases h1 : u ∈ I <;> by_cases h2 : (u - shift) ∈ I <;>
           simp [zeroExtend_apply_mem, zeroExtend_apply_nmem, h1, h2,
