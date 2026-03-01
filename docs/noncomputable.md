@@ -129,7 +129,7 @@ All theorems in Stages 1–6 are **fully proved** — there are zero `sorry` sta
 
 ## Project axioms (distinct from `sorry`)
 
-The project uses 10 explicitly declared `axiom` statements in Stages 2, 5, and 6. These are not proof gaps — they are clearly stated mathematical assumptions that will be proved in Phase 2 (axiom elimination). Each axiom carries a `**Soundness:**` annotation explaining its justification. See `docs/axiom-soundness-convention.md` and `docs/axiom-elimination-roadmap.md` for details.
+The project uses 10 explicitly declared `axiom` statements in Stages 2 and 5. These are not proof gaps — they are clearly stated mathematical assumptions that will be proved in Phase 2 (axiom elimination). Each axiom carries a `**Soundness:**` annotation explaining its justification. See `docs/axiom-soundness-convention.md` and `docs/axiom-elimination-roadmap.md` for details.
 
 Stages 1 and 4 are fully axiom-free (beyond Lean's standard `Classical.choice`, `propext`, `Quot.sound`).
 
