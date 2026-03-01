@@ -32,7 +32,7 @@ This propagation extends through all subsequent stages:
 
 | Stage | Files | Noncomputable? | Key definitions |
 |-------|-------|----------------|-----------------|
-| Stage 1 | 5 files + `UnitaryIdentity.lean` | All except `UnitaryIdentity.lean` | `RPos`, `haarMult`, `dilationOp`, `mulConv`, `mulInvol` |
+| Stage 1 | 5 files | All except `UnitaryIdentity.lean` | `RPos`, `haarMult`, `dilationOp`, `mulConv`, `mulInvol` |
 | Stage 2 | 7 files | All | `translationOp`, `logCoord`, `primeDistribution`, `archimedeanWeight`, `energyForm` |
 | Stage 4 | 5 files | All | `markovProjection`, `mollificationConstancy`, `translationInvariance` |
 | Stage 5 | 5 files | All | `fourierSymbol`, `closedForm`, `compactEmbedding`, `compactResolvent` |
