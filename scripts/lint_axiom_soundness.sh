@@ -13,7 +13,7 @@ MAX_LOOKBACK=40
 ERRORS=0
 
 # Collect all axiom declarations (file:line:content)
-# Match axioms at line start, possibly preceded by whitespace or attributes.
+# Match axioms at line start, possibly preceded by whitespace.
 mapfile -t AXIOM_LINES < <(
   grep -rn '^\s*axiom ' "$LEAN_DIR" --include='*.lean' \
     --exclude-dir='.lake' --exclude-dir='soundness'

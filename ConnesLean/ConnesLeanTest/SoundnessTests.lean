@@ -59,7 +59,7 @@ proved `energyForm_zero`. -/
     both witness the same statement — extract and verify both exist. -/
 example (Λ : ℝ) (hLam : 1 < Λ) :
     (energyForm_closed_on_line Λ hLam).zero_energy = energyForm_zero Λ :=
-  rfl  -- proof irrelevance: both prove energyForm Λ 0 = 0
+  rfl  -- Lean 4 proof irrelevance is definitional: any two proofs of the same Prop are rfl-equal
 
 /-! ## 4. Kato resolvent at f = 0
 
