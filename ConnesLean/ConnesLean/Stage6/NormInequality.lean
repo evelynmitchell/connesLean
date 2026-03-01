@@ -14,11 +14,11 @@ through integration, weighting, and the full energy form:
 
 ## Main results
 
-- `nnnorm_sq_indicator_ge`: pointwise norm inequality for disjoint indicators
-- `inner_integral_indicator_ge`: integrated inequality
-- `archEnergyIntegrand_indicator_ge`: weighted archimedean inequality
-- `primeEnergyTerm_indicator_ge`: weighted prime inequality
-- `energyForm_indicator_add_ge`: E_λ(1) ≤ E_λ(1_B) + E_λ(1_{I\B})
+- `nnnorm_sq_indicator_le`: pointwise norm inequality for disjoint indicators
+- `inner_integral_indicator_le`: integrated inequality
+- `archEnergyIntegrand_indicator_le`: weighted archimedean inequality
+- `primeEnergyTerm_indicator_le`: weighted prime inequality
+- `energyForm_indicator_add_le`: E_λ(1) ≤ E_λ(1_B) + E_λ(1_{I\B})
 -/
 
 import ConnesLean.Stage6.ConstantInDomain
@@ -40,15 +40,7 @@ open MeasureTheory Set Real Filter ENNReal
 
 noncomputable section
 
-/-! ## Section 1: ENNReal rpow helpers -/
-
-private theorem rpow_two_zero : (0 : ENNReal) ^ (2 : ℝ) = 0 := by
-  exact ENNReal.zero_rpow_of_pos (by norm_num : (0 : ℝ) < 2)
-
-private theorem rpow_two_one : (1 : ENNReal) ^ (2 : ℝ) = 1 :=
-  ENNReal.one_rpow 2
-
-/-! ## Section 2: Pointwise norm inequality
+/-! ## Section 1: Pointwise norm inequality
 
 For B ⊆ I, the zero-extended indicators satisfy:
   ‖h̃(u) - h̃(u-t)‖₊² ≤ ‖f̃(u) - f̃(u-t)‖₊² + ‖g̃(u) - g̃(u-t)‖₊²
@@ -64,7 +56,7 @@ where h̃ = zeroExtend 1 I, f̃ = zeroExtend (1_B) I, g̃ = zeroExtend (1_{I\B})
     Each case computes concrete {0,1} values.
 
     Reference: lamportform.tex, Proposition 10, Step 4 (line 1371). -/
-theorem nnnorm_sq_indicator_ge {B I : Set ℝ} (hB : B ⊆ I) (u t : ℝ) :
+theorem nnnorm_sq_indicator_le {B I : Set ℝ} (hB : B ⊆ I) (u t : ℝ) :
     (‖zeroExtend (1 : ℝ → ℂ) I u -
       zeroExtend (1 : ℝ → ℂ) I (u - t)‖₊ : ENNReal) ^ (2 : ℝ) ≤
     (‖zeroExtend (B.indicator (1 : ℝ → ℂ)) I u -
@@ -170,7 +162,7 @@ private theorem measurable_norm_sq_ze {G : ℝ → ℂ} {I : Set ℝ} {t : ℝ}
     `∫ ‖h̃ - S_t h̃‖² ≤ ∫ ‖f̃ - S_t f̃‖² + ∫ ‖g̃ - S_t g̃‖²`.
 
     Reference: lamportform.tex, Proposition 10, Step 5 (line 1378). -/
-theorem inner_integral_indicator_ge {B I : Set ℝ} (hB : B ⊆ I)
+theorem inner_integral_indicator_le {B I : Set ℝ} (hB : B ⊆ I)
     (hI : MeasurableSet I) (hBm : MeasurableSet B) (t : ℝ) :
     ∫⁻ u, ‖zeroExtend (1 : ℝ → ℂ) I u -
       translationOp t (zeroExtend (1 : ℝ → ℂ) I) u‖₊ ^ (2 : ℝ) ∂volume ≤
@@ -190,7 +182,7 @@ theorem inner_integral_indicator_ge {B I : Set ℝ} (hB : B ⊆ I)
             ^ (2 : ℝ)) ∂volume := by
         apply lintegral_mono; intro u
         simp only [translationOp_apply]
-        exact nnnorm_sq_indicator_ge hB u t
+        exact nnnorm_sq_indicator_le hB u t
     _ = _ := lintegral_add_left
         (measurable_norm_sq_ze (measurable_const.indicator hBm) hI) _
 
@@ -200,7 +192,7 @@ theorem inner_integral_indicator_ge {B I : Set ℝ} (hB : B ⊆ I)
     preserves the inequality.
 
     Reference: lamportform.tex, Proposition 10, Step 6 (line 1382). -/
-theorem archEnergyIntegrand_indicator_ge {B : Set ℝ}
+theorem archEnergyIntegrand_indicator_le {B : Set ℝ}
     (hB : B ⊆ logInterval L)
     (hBm : MeasurableSet B) (t : ℝ) :
     archEnergyIntegrand (1 : ℝ → ℂ) L t ≤
@@ -208,7 +200,7 @@ theorem archEnergyIntegrand_indicator_ge {B : Set ℝ}
     archEnergyIntegrand
       ((logInterval L \ B).indicator (1 : ℝ → ℂ)) L t := by
   unfold archEnergyIntegrand
-  have h := inner_integral_indicator_ge hB
+  have h := inner_integral_indicator_le hB
     (measurableSet_logInterval L) hBm t
   calc _ ≤ _ * (_ + _) := mul_le_mul' le_rfl h
     _ = _ + _ := mul_add _ _ _
@@ -217,7 +209,7 @@ theorem archEnergyIntegrand_indicator_ge {B : Set ℝ}
     the inequality.
 
     Reference: lamportform.tex, Proposition 10, Step 6 (line 1385). -/
-theorem primeEnergyTerm_indicator_ge {B : Set ℝ}
+theorem primeEnergyTerm_indicator_le {B : Set ℝ}
     (hB : B ⊆ logInterval L) (hBm : MeasurableSet B)
     (p m : ℕ) :
     primeEnergyTerm p m (1 : ℝ → ℂ) L ≤
@@ -225,7 +217,7 @@ theorem primeEnergyTerm_indicator_ge {B : Set ℝ}
     primeEnergyTerm p m
       ((logInterval L \ B).indicator (1 : ℝ → ℂ)) L := by
   unfold primeEnergyTerm
-  have h := inner_integral_indicator_ge hB
+  have h := inner_integral_indicator_le hB
     (measurableSet_logInterval L) hBm (↑m * Real.log ↑p)
   calc _ ≤ _ * (_ + _) := mul_le_mul' le_rfl h
     _ = _ + _ := mul_add _ _ _
@@ -239,7 +231,7 @@ theorem primeEnergyTerm_indicator_ge {B : Set ℝ}
     from Stage 6C, this forces cross-terms to vanish.
 
     Reference: lamportform.tex, Proposition 10, Step 7 (line 1388). -/
-theorem energyForm_indicator_add_ge {cutoffLambda : ℝ}
+theorem energyForm_indicator_add_le {cutoffLambda : ℝ}
     (inv : EnergyFormSplit cutoffLambda) :
     energyForm cutoffLambda (1 : ℝ → ℂ) ≤
     energyForm cutoffLambda (inv.B.indicator (1 : ℝ → ℂ)) +
@@ -251,9 +243,6 @@ theorem energyForm_indicator_add_ge {cutoffLambda : ℝ}
   -- Measurability
   have hBm_ind : Measurable (inv.B.indicator (1 : ℝ → ℂ)) :=
     measurable_const.indicator inv.B_measurable
-  have hDm_ind : Measurable ((I \ inv.B).indicator (1 : ℝ → ℂ)) :=
-    measurable_const.indicator
-      ((measurableSet_logInterval L).diff inv.B_measurable)
   -- Archimedean inequality
   have h_arch : archEnergyIntegral (1 : ℝ → ℂ) L ≤
       archEnergyIntegral (inv.B.indicator 1) L +
@@ -270,7 +259,7 @@ theorem energyForm_indicator_add_ge {cutoffLambda : ℝ}
           archEnergyIntegrand
             ((I \ inv.B).indicator 1) L t) :=
         lintegral_mono (fun t =>
-          archEnergyIntegrand_indicator_ge
+          archEnergyIntegrand_indicator_le
             inv.B_subset inv.B_measurable t)
       _ = _ := lintegral_add_left hBm_arch _
   -- Prime inequality
@@ -287,7 +276,7 @@ theorem energyForm_indicator_add_ge {cutoffLambda : ℝ}
     unfold totalPrimeEnergy
     rw [← Finset.sum_add_distrib]
     apply Finset.sum_le_sum; intro m _
-    exact primeEnergyTerm_indicator_ge
+    exact primeEnergyTerm_indicator_le
       inv.B_subset inv.B_measurable p m
   -- Combine: E(1) = arch + prime ≤ (archB + archD) + (primeB + primeD)
   --                              = (archB + primeB) + (archD + primeD) = E(B) + E(D)
@@ -307,7 +296,7 @@ theorem energyForm_indicator_add_ge {cutoffLambda : ℝ}
 
 /-! ## Section 6: Soundness tests -/
 
--- Test 1: energyForm_indicator_add_ge composes with EnergyFormSplit
+-- Test 1: energyForm_indicator_add_le composes with EnergyFormSplit
 example {cutoffLambda : ℝ}
     (inv : EnergyFormSplit cutoffLambda) :
     energyForm cutoffLambda (1 : ℝ → ℂ) ≤
@@ -315,7 +304,7 @@ example {cutoffLambda : ℝ}
     energyForm cutoffLambda
       ((logInterval (Real.log cutoffLambda) \ inv.B).indicator
         (1 : ℝ → ℂ)) :=
-  energyForm_indicator_add_ge inv
+  energyForm_indicator_add_le inv
 
 -- Test 2: splitting equality composes
 example {cutoffLambda : ℝ}
@@ -337,7 +326,7 @@ example {B I : Set ℝ} (hB : B ⊆ I) :
     (‖zeroExtend ((I \ B).indicator (1 : ℝ → ℂ)) I u -
       zeroExtend ((I \ B).indicator (1 : ℝ → ℂ)) I (u - t)‖₊ : ENNReal)
         ^ (2 : ℝ) :=
-  fun u t => nnnorm_sq_indicator_ge hB u t
+  fun u t => nnnorm_sq_indicator_le hB u t
 
 end
 
