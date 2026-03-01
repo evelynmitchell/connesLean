@@ -36,7 +36,7 @@ This propagation extends through all subsequent stages:
 | Stage 2 | 7 files | All | translationOp, logCoord, primeDistribution, archimedeanWeight, energyForm |
 | Stage 4 | 5 files | All | markovProjection, mollificationConstancy, translationInvariance |
 | Stage 5 | 5 files | All | fourierSymbol, closedForm, compactEmbedding, compactResolvent |
-| Stage 6 | 4 files | All | indicatorEnergy, energyPositivity, invarianceSplit, constantInDomain |
+| Stage 6 | 5 files | All | indicatorEnergy, energyPositivity, invarianceSplit, constantInDomain, normInequality |
 
 Every `.lean` file across Stages 1–6 opens a `noncomputable section`, with a single exception:
 
