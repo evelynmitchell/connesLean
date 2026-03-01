@@ -63,6 +63,10 @@ def formNormBall (cutoffLambda : ℝ) (M : ENNReal) : Set (ℝ → ℂ) :=
     If K is a set of functions supported in [−R, R] with uniformly bounded L² norms
     and translation equicontinuity, then K is relatively compact in L².
 
+    **Soundness:** Preconditions (compact support, uniform L² bound,
+    translation equicontinuity) are the three standard hypotheses of
+    Kolmogorov-Riesz (Brezis, Corollary 4.27). No structure parameters.
+
     Reference: Brezis, Corollary 4.27. The compact support condition subsumes
     the general tightness condition. -/
 axiom kolmogorov_riesz_compact (K : Set (ℝ → ℂ)) (R : ℝ)
@@ -75,6 +79,9 @@ axiom kolmogorov_riesz_compact (K : Set (ℝ → ℂ)) (R : ℝ)
 /-- The form-norm ball satisfies translation equicontinuity: for any ε > 0,
     there exists δ > 0 such that all φ in the form-norm ball satisfy
     ‖τ_h φ − φ‖₂² < ε whenever |h| < δ.
+
+    **Soundness:** Preconditions are `1 < cutoffLambda` and `M < ⊤` (finite
+    energy bound), matching Lemma 13's hypotheses. No structure parameters.
 
     Reference: lamportform.tex, Lemma 13 (lines 1078–1127). Uses Plancherel
     and frequency splitting to convert the form-norm bound into equicontinuity. -/

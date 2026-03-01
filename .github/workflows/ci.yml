@@ -76,6 +76,10 @@ jobs:
           echo "maxHeartbeats overrides found:"
           grep -rn 'set_option maxHeartbeats' . --include='*.lean' --exclude-dir='.lake' || echo "  (none)"
 
+      - name: Check axiom soundness annotations
+        working-directory: ConnesLean
+        run: bash ../scripts/lint_axiom_soundness.sh
+
       - name: Build library
         working-directory: ConnesLean
         run: lake build ConnesLean

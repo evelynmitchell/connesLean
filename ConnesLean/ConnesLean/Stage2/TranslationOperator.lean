@@ -103,6 +103,9 @@ theorem translationOp_lintegral_norm_eq (t : ℝ) (φ : ℝ → ℂ) :
     continuous compactly supported functions in L² plus uniform continuity,
     or dominated convergence — both paths need unformalized infrastructure.
 
+    **Soundness:** All preconditions (measurability, finite L² norm) are standard
+    analytic hypotheses matching Engel-Nagel Thm I.5.8. No structure parameters.
+
     Reference: Engel-Nagel, One-Parameter Semigroups, Theorem I.5.8. -/
 axiom translation_norm_sq_continuous (φ : ℝ → ℂ)
     (hφ_meas : Measurable φ)
