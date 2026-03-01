@@ -30,13 +30,13 @@ The noncomputability propagates through a dependency chain rooted in `ℝ`. In S
 
 This propagation extends through all subsequent stages:
 
-| Stage | Files | Noncomputable? | Key definitions |
-|-------|-------|----------------|-----------------|
-| Stage 1 | 5 files | All except `UnitaryIdentity.lean` | `RPos`, `haarMult`, `dilationOp`, `mulConv`, `mulInvol` |
-| Stage 2 | 7 files | All | `translationOp`, `logCoord`, `primeDistribution`, `archimedeanWeight`, `energyForm` |
-| Stage 4 | 5 files | All | `markovProjection`, `mollificationConstancy`, `translationInvariance` |
-| Stage 5 | 5 files | All | `fourierSymbol`, `closedForm`, `compactEmbedding`, `compactResolvent` |
-| Stage 6 | 4 files | All | `indicatorEnergy`, `energyPositivity`, `invarianceSplit`, `constantInDomain` |
+| Stage | Files | Noncomputable? | Key concepts (informal) |
+|-------|-------|----------------|-------------------------|
+| Stage 1 | 5 files + `UnitaryIdentity.lean` | All except `UnitaryIdentity.lean` | RPos, haarMult, dilationOp, mulConv, mulInvol |
+| Stage 2 | 7 files | All | translationOp, logCoord, primeDistribution, archimedeanWeight, energyForm |
+| Stage 4 | 5 files | All | markovProjection, mollificationConstancy, translationInvariance |
+| Stage 5 | 5 files | All | fourierSymbol, closedForm, compactEmbedding, compactResolvent |
+| Stage 6 | 4 files | All | indicatorEnergy, energyPositivity, invarianceSplit, constantInDomain |
 
 Every `.lean` file across Stages 1–6 opens a `noncomputable section`, with a single exception:
 
