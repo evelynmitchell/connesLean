@@ -76,8 +76,9 @@ structure KatoOperator (cutoffLambda : ℝ) where
     - E_λ is nonneg (by construction as sum of L² norms)
 
     **Soundness:** Sole precondition is `1 < cutoffLambda`. The conclusion
-    is a `KatoOperator` structure whose fields (self-adjointness, resolvent
-    identity) are substantive — it cannot be trivially constructed.
+    is a `KatoOperator` structure whose fields (a resolvent operator with
+    domain/support control and the form identity) are substantive — it cannot
+    be trivially constructed.
 
     Reference: lamportform.tex, Theorem 9, Step 1 (lines 1164–1174). -/
 axiom kato_operator (cutoffLambda : ℝ) (hLam : 1 < cutoffLambda) :
