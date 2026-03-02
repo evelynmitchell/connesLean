@@ -20,7 +20,7 @@ Two axioms consolidate the deep results:
 - `GroundState`: structure carrying eigenvalue, eigenfunction, and spectral data
 - `semigroup_positivity_improving`: axiom — T(t) is positivity improving
 - `ground_state_simple`: axiom — Perron-Frobenius gives simple ground state
-- `ground_state_exists`: theorem — chains axiom 1 → axiom 2
+- `ground_state_exists`: result — chains axiom 1 → axiom 2
 -/
 
 import ConnesLean.Stage6.Irreducibility
