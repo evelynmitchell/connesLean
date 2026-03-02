@@ -4,4 +4,5 @@ import ConnesLeanTest.Stage3Tests
 import ConnesLeanTest.Stage4Tests
 import ConnesLeanTest.Stage5Tests
 import ConnesLeanTest.Stage6Tests
+import ConnesLeanTest.Stage7Tests
 import ConnesLeanTest.SoundnessTests
