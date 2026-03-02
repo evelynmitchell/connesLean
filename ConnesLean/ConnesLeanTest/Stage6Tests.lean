@@ -51,4 +51,16 @@ example {Λ : ℝ} {B : Set ℝ} (hΛ : 1 < Λ)
     volume B = 0 ∨ volume (logInterval (Real.log Λ) \ B) = 0 :=
   energyForm_indicator_null_or_conull hΛ hB_meas hB_sub h_energy
 
+/-! ## Semigroup irreducibility tests -/
+
+/-- semigroup_irreducible composes correctly. -/
+example {Λ : ℝ} (hΛ : 1 < Λ) : IsSemigroupIrreducible Λ :=
+  semigroup_irreducible hΛ
+
+/-- invariant_ideal_trivial composes with EnergyFormSplit. -/
+example {Λ : ℝ} (hΛ : 1 < Λ) (inv : EnergyFormSplit Λ) :
+    volume inv.B = 0 ∨
+    volume (logInterval (Real.log Λ) \ inv.B) = 0 :=
+  invariant_ideal_trivial hΛ inv
+
 end

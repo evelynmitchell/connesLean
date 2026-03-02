@@ -20,7 +20,7 @@ open ConnesLean Lean
 
 /-! ## Axiom inventory
 
-These are the 10 project axioms (not proved, taken on trust).
+These are the 11 project axioms (not proved, taken on trust).
 Any change to this list should be deliberate and reviewed. -/
 
 /-- Known project axioms (informational inventory for runtime reporting).
@@ -36,6 +36,7 @@ def knownProjectAxioms : List Name :=
   , `ConnesLean.kolmogorov_riesz_compact
   , `ConnesLean.formNormBall_equicontinuous
   , `ConnesLean.kato_operator
+  , `ConnesLean.closed_ideal_classification
   ]
 
 /-- Lean/Mathlib builtin axioms that are expected in any project. -/
@@ -119,6 +120,7 @@ section CompileTimeAxiomAudit
 
 -- Stage 6: depends on translation_norm_sq_continuous
 #print axioms ConnesLean.energyForm_indicator_null_or_conull
+#print axioms ConnesLean.semigroup_irreducible
 
 end CompileTimeAxiomAudit
 
@@ -150,7 +152,7 @@ def main : IO UInt32 := do
   IO.println "========================="
   IO.println ""
   -- Section 1: Axiom inventory
-  IO.println "1. Project axiom inventory (10 declared axioms):"
+  IO.println "1. Project axiom inventory (11 declared axioms):"
   IO.println ""
   for a in knownProjectAxioms do
     IO.println s!"   - {a}"
@@ -178,6 +180,7 @@ def main : IO UInt32 := do
     kolmogorov_riesz_compact, formNormBall_equicontinuous")
   IO.println "     - compact_resolvent_of_compact_embedding → kato_operator + above"
   IO.println "     - energyForm_indicator_null_or_conull → translation_norm_sq_continuous"
+  IO.println "     - semigroup_irreducible → translation_norm_sq_continuous"
   IO.println ""
   -- Section 4: maxHeartbeats audit
   IO.println "4. maxHeartbeats overrides (track for Lean version bumps):"
