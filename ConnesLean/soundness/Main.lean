@@ -8,7 +8,7 @@ Executable that reports soundness properties of the formalization:
 1. Axiom audit: `#print axioms` for every main theorem at compile time.
    CI separately greps build output for `sorryAx` to catch proof gaps.
 2. Sanity checks: compile tautologies and verify no `sorryAx` in their axiom sets.
-3. Axiom inventory: list all 13 declared project axioms.
+3. Axiom inventory: list all 14 declared project axioms.
 
 Run via `lake exe soundness_check`.
 -/
@@ -20,7 +20,7 @@ open ConnesLean Lean
 
 /-! ## Axiom inventory
 
-These are the 13 project axioms (not proved, taken on trust).
+These are the 14 project axioms (not proved, taken on trust).
 Any change to this list should be deliberate and reviewed. -/
 
 /-- Known project axioms (informational inventory for runtime reporting).
@@ -39,6 +39,7 @@ def knownProjectAxioms : List Name :=
   , `ConnesLean.closed_ideal_classification
   , `ConnesLean.semigroup_positivity_improving
   , `ConnesLean.ground_state_simple
+  , `ConnesLean.resolvent_commutes_reflection
   ]
 
 /-- Lean/Mathlib builtin axioms that are expected in any project. -/
@@ -127,6 +128,9 @@ section CompileTimeAxiomAudit
 -- Stage 7: depends on kato_operator + semigroup_positivity_improving + ground_state_simple
 #print axioms ConnesLean.ground_state_exists
 
+-- Stage 8: depends on Stage 7 axioms + resolvent_commutes_reflection
+#print axioms ConnesLean.ground_state_even
+
 end CompileTimeAxiomAudit
 
 /-! ## Compile-time sanity checks
@@ -157,7 +161,7 @@ def main : IO UInt32 := do
   IO.println "========================="
   IO.println ""
   -- Section 1: Axiom inventory
-  IO.println "1. Project axiom inventory (13 declared axioms):"
+  IO.println "1. Project axiom inventory (14 declared axioms):"
   IO.println ""
   for a in knownProjectAxioms do
     IO.println s!"   - {a}"
@@ -179,7 +183,7 @@ def main : IO UInt32 := do
   IO.println "     - primeConstant_nonpos, archWeight_pos, energyForm_zero"
   IO.println "     - energyForm_comp_normalContraction_le, null_or_conull_of_translation_invariant"
   IO.println ""
-  IO.println "   Expected to depend on project axioms (Stages 5-7):"
+  IO.println "   Expected to depend on project axioms (Stages 5-8):"
   IO.println "     - fourierSymbol_tendsto_atTop → fourierSymbol_ge_log"
   IO.println ("     - formNormBall_isRelativelyCompactL2 → \
     kolmogorov_riesz_compact, formNormBall_equicontinuous")
@@ -188,6 +192,8 @@ def main : IO UInt32 := do
   IO.println "     - semigroup_irreducible → translation_norm_sq_continuous"
   IO.println ("     - ground_state_exists → \
     semigroup_positivity_improving, ground_state_simple, kato_operator")
+  IO.println ("     - ground_state_even → \
+    resolvent_commutes_reflection + Stage 7 axioms")
   IO.println ""
   -- Section 4: maxHeartbeats audit
   IO.println "4. maxHeartbeats overrides (track for Lean version bumps):"

@@ -1,5 +1,8 @@
 # Lean & LSpec Patterns
 
+## Theorem vs Def
+- If the return type is a `structure` (carries data, not `Prop`), use `def` not `theorem`. Lean rejects `theorem` for non-Prop types. Example: `ground_state_exists` returns `GroundState` (a structure), so it must be `def`.
+
 ## Finding Mathlib lemmas
 - Use Loogle to search by type signature; always check before guessing names
 - Use `lean_local_search` to verify a name exists before using it in a proof
@@ -237,6 +240,72 @@
 - `add_add_add_comm a b c d : (a + b) + (c + d) = (a + c) + (b + d)`
 - Use after `add_le_add h_arch h_prime` to rearrange from (arch_B + arch_D) + (prime_B + prime_D)
   to (arch_B + prime_B) + (arch_D + prime_D) = E(B) + E(D)
+
+## ENNReal cancellation for component equality
+- Pattern: `a + b = c + d`, `a ≤ c`, `b ≤ d`, `a + b ≠ ⊤` → `a = c`
+- Proof: `le_antisymm h_ac` then `(ENNReal.add_le_add_iff_right h_d_fin).mp h1`
+  where `h1` is obtained by `rw [h_eq] at (add_le_add_right h_bd a)`
+- Use `add_le_add_right` (NOT `add_le_add_left`) for `b ≤ d → a + b ≤ a + d`
+- `ENNReal.mul_right_inj (h0 : a ≠ 0) (ht : a ≠ ⊤) : a * b = a * c ↔ b = c`
+
+## ae equality → everywhere equality on open sets
+- `Measure.eqOn_of_ae_eq : f =ᵐ[μ.restrict s] g → ContinuousOn f s → ContinuousOn g s → s ⊆ closure (interior s) → EqOn f g s`
+- For open sets: `s ⊆ closure (interior s)` is `isOpen_Ioo.interior_eq ▸ subset_closure`
+- `ae_eq_of_ae_le_of_lintegral_le : f ≤ᵐ g → ∫f ≠ ⊤ → AEMeasurable g → ∫g ≤ ∫f → f =ᵐ g`
+  Note: reversed inequality direction on integrals
+
+## lintegral_add_left matching
+- `lintegral_add_left` infers `f` from the measurability proof type
+- If `hf : Measurable (archEnergyIntegrand G L)`, then `rw [lintegral_add_left hf]` matches
+  `∫ (archEnergyIntegrand G L t + g t)` correctly
+- If `hf` is built from unfolded components, Lean infers `f` as the unfolded form → mismatch
+- Fix: prove `hf : Measurable (archEnergyIntegrand G L)` as a named `have`, ensuring the type
+- **`comp` in measurability breaks `rw` matching**: `hf.comp (measurable_id.sub measurable_const)`
+  proves `Measurable (f ∘ (fun u => id u - t))` but `rw [lintegral_add_left hf_comp]` looks for
+  `(f ∘ (fun u => id u - t)) u` in the goal, not `f (u - t)`. These are definitionally equal but
+  `rw` doesn't handle that.
+- **Best fix: `set fB := fun u => ...` then `lintegral_add_left hfB_meas`**: naming the function
+  explicitly with `set` makes Lean resolve the match at definition time. After splitting, use
+  `change` to convert to a named API form (e.g. `innerIntegral`).
+
+## `set` local defs get unfolded by `unfold`/`simp`
+- `set L := Real.log cutoffLambda` and `set I := logInterval L` create local defs
+- `unfold innerIntegral` + `simp only [translationOp_apply]` will unfold `L` and `I` too,
+  producing `logInterval (log cutoffLambda)` instead of `I` in hypotheses
+- Then `change ... I ...` on a goal still using `I` fails (different normal forms)
+- **Fix**: Don't unfold + simp on hypotheses to convert them. Instead, use `change` on the
+  goal to match the API form, or use `set` + named lemma approach to avoid the mismatch.
+- Alternative: manipulate at the `innerIntegral` level (don't unfold), then `change` to
+  convert between raw integrand goals and the named API.
+
+## `set` vs `let` aliasing in proofs
+- `set gs := expr` creates an **opaque** local definition. If another function returns a `let`-bound value with the same underlying expression, `rw` and type unification may fail because the `set` alias isn't definitionally equal to the `let` binding.
+- **Symptom**: "Application type mismatch" when passing a hypothesis proved about `set`-aliased terms to a function that expects the raw expression.
+- **Fix 1**: Use `set gs := expr with gs_def` and `rw [gs_def]` to explicitly unfold when needed.
+- **Fix 2**: Use `let` instead of `set` for transparent bindings (but `let` doesn't rewrite in the goal).
+- **Fix 3**: Avoid aliasing entirely — work with the full expression `(ground_state_exists Λ hΛ).eigenfunction` directly.
+
+## `rw` replaces ALL occurrences (both sides of goal)
+- `rw [h]` where `h : a = b` replaces every `a` with `b` in the goal, including on the RHS.
+- If the goal is `a = f a` and you `rw [h]` where `h : a = c·a`, you get `c·a = f (c·a)` (wrong).
+- **Fix**: Use `calc` blocks for chained equalities, or `conv_lhs { rw [...] }` for targeted rewriting.
+
+## ae transfer through negation on ℝ
+- `Measure.IsNegInvariant volume` does NOT have an instance for Lebesgue measure on ℝ (as of Mathlib v4.28).
+- **Workaround**: Use `Real.volume_preimage_mul_left` with `a = -1`:
+  ```
+  have : Neg.neg ⁻¹' S = (fun x => (-1 : ℝ) * x) ⁻¹' S := by ext x; simp
+  rw [this, Real.volume_preimage_mul_left (by norm_num : (-1 : ℝ) ≠ 0)]
+  simp [h]  -- |(-1)⁻¹| = 1, so measure is preserved
+  ```
+
+## sq_eq_one_iff for ℂ
+- `sq_eq_one_iff : a ^ 2 = 1 ↔ a = 1 ∨ a = -1` requires `[Ring R] [NoZeroDivisors R]`
+- ℂ has `NoZeroDivisors` (via `import Mathlib.Analysis.SpecialFunctions.Complex.Circle` or similar)
+
+## Deriving contradiction from ae + positive-measure set
+- Pattern: have `∀ᵐ x, x ∈ I → False` where `I` has positive measure.
+- Proof: `rw [ae_iff]` gives `volume {x | ¬(x ∈ I → False)} = 0`, simplify set to `I`, then `absurd` with `ne_of_gt (volume_Ioo_pos)`.
 
 ## Indicator case analysis: include ALL membership facts in simp
 - For `I.indicator`, `B.indicator`, `(I\B).indicator`: include simp lemmas for EVERY set
