@@ -1,5 +1,13 @@
 # ConnesLean Project Memory
 
+## Project Summary (Complete)
+Formalization in Lean 4 + Mathlib of Christopher Long's proof of properties of the
+Restricted Weil Quadratic Form, from LaTeX structured proofs (lamportform.tex) to
+verified Lean code. 8 stages, ~30 Lean files, 14 axioms, 0 sorries, full CI pipeline
+with soundness auditing. Covers: multiplicative Haar measure, dilation/convolution operators,
+energy decomposition, Markov/translation-invariance, Fourier analysis, compact resolvent,
+semigroup irreducibility, Perron-Frobenius ground state, and inversion symmetry (even eigenfunction).
+
 ## Project State
 - **Stage 1**: Complete. All 9 sorries closed, PRs #9-#18 merged.
 - **Stage 2**: Complete. 8 PRs merged, 0 sorries (PRs #28-#36, Issues #19-#27).
@@ -22,7 +30,7 @@
   - `IsPositivityImproving` def, `GroundState` structure (7 fields)
   - 2 new axioms: `semigroup_positivity_improving`, `ground_state_simple`
   - Main result: `ground_state_exists` (def, not theorem — GroundState is data, not Prop)
-- **Stage 8**: PR #102 (pending review). 217L, 0 sorries, 14 axioms total (13 → 14).
+- **Stage 8**: PR #102, merged. 217L, 0 sorries, 14 axioms total (13 → 14).
   - 1 new axiom: `resolvent_commutes_reflection` (Proposition 14)
   - Key defs: `reflectionOp`, `ae_neg`, `ae_of_ae_neg`, `logInterval_neg_mem`
   - Main result: `ground_state_even` — ψ(-u) = ψ(u) a.e. (Corollary 16)
