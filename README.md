@@ -1,5 +1,6 @@
 # connesLean
 Christopher Long's proof of Restricted Weil Quadratic Form, formalized in Lean
+Docs: https://evelynmitchell.github.io/connesLean/
 
 The original proof is at https://github.com/octonion/mathematics/tree/main/connes and the version I am using is in lamportportform.tex
 
