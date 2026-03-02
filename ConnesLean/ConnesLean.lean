@@ -27,3 +27,4 @@ import ConnesLean.Stage6.InvarianceSplit
 import ConnesLean.Stage6.ConstantInDomain
 import ConnesLean.Stage6.NormInequality
 import ConnesLean.Stage6.EnergyEquality
+import ConnesLean.Stage6.CrossVanishing
