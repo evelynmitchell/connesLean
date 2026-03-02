@@ -86,7 +86,7 @@ theorem archEnergyIntegral_indicator_eq {cutoffLambda : ℝ}
           (archEnergyIntegrand (inv.B.indicator 1) L t +
            archEnergyIntegrand ((I \ inv.B).indicator 1) L t) :=
         lintegral_mono (fun t =>
-          archEnergyIntegrand_indicator_ge inv.B_subset inv.B_measurable t)
+          archEnergyIntegrand_indicator_le inv.B_subset inv.B_measurable t)
       _ = _ := lintegral_add_left
           (measurable_archWeight_toNNReal.coe_nnreal_ennreal.mul
             (measurable_archEnergyIntegrand
@@ -103,7 +103,7 @@ theorem archEnergyIntegral_indicator_eq {cutoffLambda : ℝ}
     apply Finset.sum_le_sum; intro p _; unfold totalPrimeEnergy
     rw [← Finset.sum_add_distrib]
     apply Finset.sum_le_sum; intro m _
-    exact primeEnergyTerm_indicator_ge inv.B_subset inv.B_measurable p m
+    exact primeEnergyTerm_indicator_le inv.B_subset inv.B_measurable p m
   -- Rearrange energy form equality into component form
   have h_rearr : archEnergyIntegral (1 : ℝ → ℂ) L +
       ∑ p ∈ primeFinset cutoffLambda,
@@ -147,7 +147,7 @@ theorem archEnergyIntegrand_indicator_ae_eq {cutoffLambda : ℝ}
       archEnergyIntegrand (inv.B.indicator 1) L t +
       archEnergyIntegrand ((I \ inv.B).indicator 1) L t :=
     Filter.Eventually.of_forall fun t =>
-      archEnergyIntegrand_indicator_ge inv.B_subset inv.B_measurable t
+      archEnergyIntegrand_indicator_le inv.B_subset inv.B_measurable t
   -- ∫ f ≠ ⊤
   have h_fin : ∫⁻ t in Ioo 0 (2 * L),
       archEnergyIntegrand (1 : ℝ → ℂ) L t ≠ ⊤ :=
