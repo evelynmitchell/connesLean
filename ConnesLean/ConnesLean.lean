@@ -26,3 +26,4 @@ import ConnesLean.Stage6.EnergyPositivity
 import ConnesLean.Stage6.InvarianceSplit
 import ConnesLean.Stage6.ConstantInDomain
 import ConnesLean.Stage6.NormInequality
+import ConnesLean.Stage6.EnergyEquality
