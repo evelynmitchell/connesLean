@@ -8,7 +8,7 @@ Executable that reports soundness properties of the formalization:
 1. Axiom audit: `#print axioms` for every main theorem at compile time.
    CI separately greps build output for `sorryAx` to catch proof gaps.
 2. Sanity checks: compile tautologies and verify no `sorryAx` in their axiom sets.
-3. Axiom inventory: list all 10 declared project axioms.
+3. Axiom inventory: list all 11 declared project axioms.
 
 Run via `lake exe soundness_check`.
 -/
