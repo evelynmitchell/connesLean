@@ -30,3 +30,4 @@ import ConnesLean.Stage6.EnergyEquality
 import ConnesLean.Stage6.CrossVanishing
 import ConnesLean.Stage6.Irreducibility
 import ConnesLean.Stage7.GroundState
+import ConnesLean.Stage8.EvenGroundState
